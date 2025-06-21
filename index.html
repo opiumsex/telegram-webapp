@@ -76,14 +76,16 @@
         </div>
     </div>
 
-    <div id="loginModal" class="modal">
-        <div class="modal-content auth-modal">
-            <h2>Вход</h2>
-            <input type="text" id="loginUsername" placeholder="Никнейм" class="auth-input">
-            <input type="password" id="loginPassword" placeholder="Пароль" class="auth-input">
-            <button id="loginBtn" class="auth-btn">Войти</button>
-        </div>
+    <!-- Упрощенное модальное окно входа -->
+<div id="authModal" class="modal">
+    <div class="modal-content auth-modal">
+        <h2>Вход для администраторов</h2>
+        <input type="text" id="loginUsername" placeholder="Логин" class="auth-input">
+        <input type="password" id="loginPassword" placeholder="Пароль" class="auth-input">
+        <button id="loginBtn" class="auth-btn">Войти</button>
+        <button id="skipLogin" class="auth-btn secondary">Продолжить без входа</button>
     </div>
+</div>
 
     <div id="postModal" class="modal">
         <div class="modal-content post-modal">
