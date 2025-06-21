@@ -1,0 +1,561 @@
+/* Базовые стили */
+:root {
+    --black: #000000;
+    --white: #ffffff;
+    --gray: #222222;
+    --light-gray: #444444;
+    --border-radius: 12px;
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--black);
+    color: var(--white);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Шапка приложения */
+.app-header {
+    background-color: var(--black);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--white);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.menu-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.menu-bar {
+    width: 25px;
+    height: 3px;
+    background-color: var(--white);
+    margin: 5px 0;
+    border-radius: 3px;
+    transition: var(--transition);
+}
+
+/* Боковое меню */
+.side-menu {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100%;
+    background-color: var(--black);
+    border-left: 1px solid var(--white);
+    z-index: 200;
+    transition: var(--transition);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.side-menu.active {
+    right: 0;
+}
+
+.side-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 150;
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--transition);
+}
+
+.side-menu-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.profile-section {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profile-pic-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 15px;
+}
+
+.profile-pic {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--white);
+}
+
+.change-avatar-btn {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--white);
+    color: var(--black);
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.profile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.profile-input {
+    padding: 10px 15px;
+    border: 1px solid var(--white);
+    border-radius: var(--border-radius);
+    background-color: var(--black);
+    color: var(--white);
+    font-size: 1rem;
+}
+
+.profile-btn {
+    padding: 10px 15px;
+    background-color: var(--white);
+    color: var(--black);
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.profile-btn:hover {
+    opacity: 0.9;
+}
+
+/* Основное содержимое */
+.main-content {
+    flex: 1;
+    padding: 20px;
+    margin-bottom: 70px;
+}
+
+.section-title {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.add-post-btn {
+    padding: 8px 15px;
+    background-color: var(--white);
+    color: var(--black);
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.add-post-btn:hover {
+    opacity: 0.9;
+}
+
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.post-card {
+    background-color: var(--gray);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    border: 1px solid var(--white);
+    transition: var(--transition);
+}
+
+.post-card:hover {
+    transform: translateY(-5px);
+}
+
+.post-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.post-content {
+    padding: 15px;
+}
+
+.post-description {
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.download-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: var(--white);
+    color: var(--black);
+    text-align: center;
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    font-weight: bold;
+    transition: var(--transition);
+}
+
+.download-btn:hover {
+    opacity: 0.9;
+}
+
+/* Нижняя навигация */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--black);
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    border-top: 1px solid var(--white);
+    z-index: 100;
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 5px 10px;
+    position: relative;
+    opacity: 0.7;
+    transition: var(--transition);
+}
+
+.nav-btn i {
+    font-size: 1.2rem;
+    margin-bottom: 3px;
+}
+
+.nav-btn.active {
+    opacity: 1;
+}
+
+.nav-indicator {
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    height: 3px;
+    background-color: var(--white);
+    transition: var(--transition);
+    width: 33.33%;
+}
+
+/* Модальные окна */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 300;
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--transition);
+}
+
+.modal.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.modal-content {
+    background-color: var(--black);
+    border: 1px solid var(--white);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: translateY(20px);
+    transition: var(--transition);
+}
+
+.modal.active .modal-content {
+    transform: translateY(0);
+}
+
+.auth-modal {
+    text-align: center;
+}
+
+.auth-modal h2 {
+    margin-bottom: 20px;
+}
+
+.avatar-upload-container {
+    margin-bottom: 20px;
+}
+
+.avatar-upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.avatar-upload-label img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--white);
+    margin-bottom: 10px;
+}
+
+.auth-input {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border: 1px solid var(--white);
+    border-radius: var(--border-radius);
+    background-color: var(--black);
+    color: var(--white);
+    font-size: 1rem;
+}
+
+.auth-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--white);
+    color: var(--black);
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.auth-btn:hover {
+    opacity: 0.9;
+}
+
+.post-modal textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border: 1px solid var(--white);
+    border-radius: var(--border-radius);
+    background-color: var(--black);
+    color: var(--white);
+    font-size: 1rem;
+    resize: vertical;
+}
+
+.file-upload-label {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    background-color: var(--white);
+    color: var(--black);
+    text-align: center;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.file-upload-label:hover {
+    opacity: 0.9;
+}
+
+.post-modal-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.post-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.post-btn.secondary {
+    background-color: transparent;
+    color: var(--white);
+    border: 1px solid var(--white);
+}
+
+.post-btn.primary {
+    background-color: var(--white);
+    color: var(--black);
+}
+
+.post-btn:hover {
+    opacity: 0.9;
+}
+
+/* Админ-панель */
+.admin-tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--white);
+}
+
+.admin-tab {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    color: var(--white);
+    cursor: pointer;
+    opacity: 0.7;
+    transition: var(--transition);
+    border-bottom: 2px solid transparent;
+}
+
+.admin-tab.active {
+    opacity: 1;
+    border-bottom: 2px solid var(--white);
+}
+
+.admin-tab-content {
+    display: none;
+}
+
+.admin-tab-content.active {
+    display: block;
+}
+
+.admin-input {
+    width: 100%;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    border: 1px solid var(--white);
+    border-radius: var(--border-radius);
+    background-color: var(--black);
+    color: var(--white);
+    font-size: 1rem;
+}
+
+.users-list, .posts-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.user-item, .post-item {
+    padding: 10px;
+    border-bottom: 1px solid var(--light-gray);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-actions, .post-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    color: var(--white);
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 5px;
+}
+
+.action-btn:hover {
+    opacity: 0.8;
+}
+
+/* Адаптивность */
+@media (max-width: 480px) {
+    .posts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .side-menu {
+        width: 100%;
+        right: -100%;
+    }
+    
+    .side-menu.active {
+        right: 0;
+    }
+    
+    .nav-btn span {
+        display: none;
+    }
+    
+    .nav-btn i {
+        font-size: 1.5rem;
+    }
+}
+
+/* Анимации */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
