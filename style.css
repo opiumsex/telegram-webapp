@@ -560,3 +560,33 @@ body {
         opacity: 1;
     }
 }
+/* Стили для выбора администратора */
+.admin-list {
+  padding: 20px;
+  text-align: center;
+}
+
+.admin-account {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid var(--white);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.admin-account:hover {
+  background-color: var(--light-gray);
+}
+
+.admin-account img {
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.admin-account.guest {
+  justify-content: center;
+  margin-top: 20px;
+}
