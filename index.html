@@ -3,133 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram WebApp</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Akermansex Team - приложение сборок</title>
+    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <!-- Шапка приложения -->
-    <header class="app-header">
-        <div class="header-title">Файловый обменник</div>
-        <button id="menuToggle" class="menu-toggle">
-            <div class="menu-bar"></div>
-            <div class="menu-bar"></div>
-            <div class="menu-bar"></div>
-        </button>
-    </header>
+    <div class="app-container">
+        <!-- Шапка приложения -->
+        <header class="app-header">
+            <h1>Akermansex Team</h1>
+        </header>
 
-    <!-- Боковое меню профиля -->
-    <div id="sideMenu" class="side-menu">
-        <div class="profile-section">
-            <div class="profile-pic-container">
-                <img id="profilePic" src="" alt="Аватар" class="profile-pic">
-                <label for="avatarUpload" class="change-avatar-btn">Изменить</label>
-                <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+        <!-- Основное содержимое -->
+        <main class="app-main" id="appContent">
+            <!-- Контент будет загружаться динамически -->
+        </main>
+
+        <!-- Нижнее меню -->
+        <nav class="app-nav">
+            <div class="nav-item active" data-section="builds">
+                <i class="fas fa-box-open"></i>
+                <span>Сборки</span>
             </div>
-            <h3 id="usernameDisplay">Гость</h3>
-        </div>
-        <div class="profile-actions">
-            <input type="text" id="usernameInput" placeholder="Новый никнейм" class="profile-input">
-            <button id="saveUsername" class="profile-btn">Сохранить ник</button>
-            <button id="logoutBtn" class="profile-btn">Выйти</button>
-        </div>
-    </div>
-    <div id="sideMenuOverlay" class="side-menu-overlay"></div>
-
-    <!-- Основное содержимое -->
-    <main id="mainContent" class="main-content">
-        <!-- Контент будет загружаться динамически -->
-    </main>
-
-    <!-- Нижняя навигация -->
-    <nav class="bottom-nav">
-        <button class="nav-btn active" data-section="builds">
-            <i class="fas fa-box-open"></i>
-            <span>Сборки</span>
-        </button>
-        <button class="nav-btn" data-section="redesigns">
-            <i class="fas fa-paint-brush"></i>
-            <span>Редизайны</span>
-        </button>
-        <button class="nav-btn" data-section="admin">
-            <i class="fas fa-user-shield"></i>
-            <span>Админ</span>
-        </button>
-        <div class="nav-indicator"></div>
-    </nav>
-
-    <!-- Модальные окна -->
-    <div id="authModal" class="modal">
-        <div class="modal-content auth-modal">
-            <h2>Регистрация</h2>
-            <div class="avatar-upload-container">
-                <label for="registerAvatar" class="avatar-upload-label">
-                    <img id="avatarPreview" src="https://via.placeholder.com/100" alt="Аватар">
-                    <span>Выбрать аватар</span>
-                </label>
-                <input type="file" id="registerAvatar" accept="image/*" style="display: none;">
+            <div class="nav-item" data-section="redesigns">
+                <i class="fas fa-paint-brush"></i>
+                <span>Редизайны</span>
             </div>
-            <input type="text" id="registerUsername" placeholder="Никнейм" class="auth-input">
-            <input type="password" id="registerPassword" placeholder="Пароль" class="auth-input">
-            <input type="password" id="registerConfirmPassword" placeholder="Подтвердите пароль" class="auth-input">
-            <button id="registerBtn" class="auth-btn">Зарегистрироваться</button>
-        </div>
-    </div>
+            <div class="nav-item" data-section="admin">
+                <i class="fas fa-user-shield"></i>
+                <span>Админ панель</span>
+            </div>
+            <div class="nav-indicator"></div>
+        </nav>
 
-    <div id="loginModal" class="modal">
-        <div class="modal-content auth-modal">
-            <h2>Вход</h2>
-            <input type="text" id="loginUsername" placeholder="Никнейм" class="auth-input">
-            <input type="password" id="loginPassword" placeholder="Пароль" class="auth-input">
-            <button id="loginBtn" class="auth-btn">Войти</button>
+        <!-- Модальное окно для входа в админку -->
+        <div class="modal" id="loginModal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2>Вход в админ панель</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <input type="text" id="username" placeholder="Никнейм" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="password" placeholder="Пароль" required>
+                    </div>
+                    <button type="submit" class="btn">Войти</button>
+                </form>
+                <p id="loginError" class="error-message"></p>
+            </div>
         </div>
-    </div>
 
-    <div id="postModal" class="modal">
-        <div class="modal-content post-modal">
-            <h2>Новый пост</h2>
-            <textarea id="postDescription" placeholder="Описание" class="post-input"></textarea>
-            <label for="postImage" class="file-upload-label">
-                <i class="fas fa-image"></i> Выбрать изображение
-                <input type="file" id="postImage" accept="image/*" style="display: none;">
-            </label>
-            <label for="postFile" class="file-upload-label">
-                <i class="fas fa-file-archive"></i> Выбрать файл
-                <input type="file" id="postFile" style="display: none;">
-            </label>
-            <div class="post-modal-actions">
-                <button id="cancelPost" class="post-btn secondary">Отмена</button>
-                <button id="submitPost" class="post-btn primary">Выложить</button>
+        <!-- Модальное окно для создания поста -->
+        <div class="modal" id="postModal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2>Создать новый пост</h2>
+                <form id="postForm">
+                    <div class="form-group">
+                        <textarea id="postDescription" placeholder="Описание поста" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="postImage" class="file-label">
+                            <i class="fas fa-image"></i> Выбрать изображение
+                            <input type="file" id="postImage" accept="image/*" required>
+                        </label>
+                        <div id="imagePreview"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="postFile" class="file-label">
+                            <i class="fas fa-file-archive"></i> Выбрать файл
+                            <input type="file" id="postFile" required>
+                        </label>
+                        <div id="fileInfo"></div>
+                    </div>
+                    <button type="submit" class="btn">Выложить</button>
+                </form>
             </div>
         </div>
     </div>
 
-    <div id="adminModal" class="modal">
-        <div class="modal-content admin-modal">
-            <h2>Администрирование</h2>
-            <div class="admin-tabs">
-                <button class="admin-tab active" data-tab="users">Пользователи</button>
-                <button class="admin-tab" data-tab="posts">Посты</button>
-            </div>
-            <div id="usersTab" class="admin-tab-content active">
-                <input type="text" id="searchUser" placeholder="Поиск пользователя" class="admin-input">
-                <div id="usersList" class="users-list"></div>
-            </div>
-            <div id="postsTab" class="admin-tab-content">
-                <select id="postsSectionFilter" class="admin-input">
-                    <option value="all">Все разделы</option>
-                    <option value="builds">Сборки</option>
-                    <option value="redesigns">Редизайны</option>
-                </select>
-                <div id="postsList" class="posts-list"></div>
-            </div>
-        </div>
-    </div>
-
-    <script src="storage.js"></script>
-    <script src="auth.js"></script>
-    <script src="posts.js"></script>
-    <script src="admin.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
