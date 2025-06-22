@@ -22,13 +22,15 @@
     <div id="sideMenu" class="side-menu">
         <div class="profile-section">
             <div class="profile-pic-container">
-                <img id="profilePic" src="https://via.placeholder.com/100" alt="Аватар" class="profile-pic">
+                <img id="profilePic" src="" alt="Аватар" class="profile-pic">
                 <label for="avatarUpload" class="change-avatar-btn">Изменить</label>
                 <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
             </div>
             <h3 id="usernameDisplay">Гость</h3>
         </div>
         <div class="profile-actions">
+            <input type="text" id="usernameInput" placeholder="Новый никнейм" class="profile-input">
+            <button id="saveUsername" class="profile-btn">Сохранить ник</button>
             <button id="logoutBtn" class="profile-btn">Выйти</button>
         </div>
     </div>
@@ -59,11 +61,27 @@
     <!-- Модальные окна -->
     <div id="authModal" class="modal">
         <div class="modal-content auth-modal">
-            <h2>Вход для администраторов</h2>
-            <input type="text" id="loginUsername" placeholder="Логин" class="auth-input">
+            <h2>Регистрация</h2>
+            <div class="avatar-upload-container">
+                <label for="registerAvatar" class="avatar-upload-label">
+                    <img id="avatarPreview" src="https://via.placeholder.com/100" alt="Аватар">
+                    <span>Выбрать аватар</span>
+                </label>
+                <input type="file" id="registerAvatar" accept="image/*" style="display: none;">
+            </div>
+            <input type="text" id="registerUsername" placeholder="Никнейм" class="auth-input">
+            <input type="password" id="registerPassword" placeholder="Пароль" class="auth-input">
+            <input type="password" id="registerConfirmPassword" placeholder="Подтвердите пароль" class="auth-input">
+            <button id="registerBtn" class="auth-btn">Зарегистрироваться</button>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content auth-modal">
+            <h2>Вход</h2>
+            <input type="text" id="loginUsername" placeholder="Никнейм" class="auth-input">
             <input type="password" id="loginPassword" placeholder="Пароль" class="auth-input">
             <button id="loginBtn" class="auth-btn">Войти</button>
-            <button id="skipLogin" class="auth-btn secondary">Продолжить без входа</button>
         </div>
     </div>
 
@@ -90,9 +108,14 @@
         <div class="modal-content admin-modal">
             <h2>Администрирование</h2>
             <div class="admin-tabs">
-                <button class="admin-tab active" data-tab="posts">Посты</button>
+                <button class="admin-tab active" data-tab="users">Пользователи</button>
+                <button class="admin-tab" data-tab="posts">Посты</button>
             </div>
-            <div id="postsTab" class="admin-tab-content active">
+            <div id="usersTab" class="admin-tab-content active">
+                <input type="text" id="searchUser" placeholder="Поиск пользователя" class="admin-input">
+                <div id="usersList" class="users-list"></div>
+            </div>
+            <div id="postsTab" class="admin-tab-content">
                 <select id="postsSectionFilter" class="admin-input">
                     <option value="all">Все разделы</option>
                     <option value="builds">Сборки</option>
@@ -103,6 +126,10 @@
         </div>
     </div>
 
+    <script src="storage.js"></script>
+    <script src="auth.js"></script>
+    <script src="posts.js"></script>
+    <script src="admin.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
