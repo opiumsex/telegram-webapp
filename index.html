@@ -4,79 +4,1049 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Akermansex Team - сайт сборок</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Общие стили */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #000;
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Стили для мобильной версии */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 100%;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Стили для ПК версии */
+        @media (min-width: 768px) {
+            .app-container {
+                max-width: 800px;
+                height: 90vh;
+                margin: 5vh auto;
+                border: 1px solid #fff;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        .app-header {
+            padding: 15px;
+            border-bottom: 1px solid #fff;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px;
+            background-color: #000;
+            color: #fff;
+            border: 1px solid #fff;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .search-button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #fff;
+            background-color: #000;
+            position: relative;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            padding: 10px 15px;
+            position: relative;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+
+        .nav-indicator {
+            position: absolute;
+            bottom: -1px;
+            height: 3px;
+            background-color: #fff;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .nav-button.active {
+            font-weight: bold;
+        }
+
+        .post {
+            border: 1px solid #fff;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .post-banner {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .post-banner-placeholder {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #222;
+            color: #fff;
+        }
+
+        .post-content {
+            padding: 15px;
+        }
+
+        .post-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .post-description {
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .download-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #000;
+            color: #fff;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .download-button:hover {
+            background-color: #fff;
+            color: #000;
+        }
+
+        .no-file {
+            color: #aaa;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        .admin-panel {
+            padding: 15px;
+        }
+
+        .admin-section {
+            margin-bottom: 20px;
+            border: 1px solid #fff;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .admin-section h2 {
+            margin-bottom: 15px;
+        }
+
+        .admin-button {
+            padding: 10px 15px;
+            background-color: #000;
+            color: #fff;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+            min-width: 120px;
+        }
+
+        .admin-button:hover {
+            background-color: #fff;
+            color: #000;
+        }
+
+        .post-actions {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            gap: 10px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-container {
+            background-color: #000;
+            border: 1px solid #fff;
+            border-radius: 10px;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .modal-title {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            background-color: #000;
+            color: #fff;
+            border: 1px solid #fff;
+            border-radius: 5px;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 10px;
+            background-color: #000;
+            color: #fff;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 10px;
+            background-color: #000;
+            color: #fff;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .preview-container {
+            margin-bottom: 15px;
+        }
+
+        .preview-banner {
+            max-width: 100%;
+            max-height: 200px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .submit-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #000;
+            color: #fff;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .submit-button:hover {
+            background-color: #fff;
+            color: #000;
+        }
+
+        .post-preview {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #fff;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .no-posts {
+            text-align: center;
+            margin-top: 20px;
+            color: #aaa;
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
+        <!-- Шапка приложения -->
         <header class="app-header">
-            <h1>Akermansex Team</h1>
+            <div class="search-container">
+                <input type="text" placeholder="Найти сборку" class="search-input">
+                <button class="search-button">🔍︎</button>
+            </div>
         </header>
-
-        <main class="app-main" id="appContent">
+        
+        <!-- Основное содержимое -->
+        <main class="app-content" id="app-content">
             <!-- Контент будет загружаться динамически -->
         </main>
-
-        <nav class="app-nav">
-            <div class="nav-item active" data-section="builds">
-                <i class="fas fa-box-open"></i>
-                <span>Сборки</span>
-            </div>
-            <div class="nav-item" data-section="redesigns">
-                <i class="fas fa-paint-brush"></i>
-                <span>Редизайны</span>
-            </div>
-            <div class="nav-item" data-section="admin">
-                <i class="fas fa-user-shield"></i>
-                <span>Админ</span>
-            </div>
-            <div class="nav-indicator"></div>
+        
+        <!-- Нижняя панель навигации -->
+        <nav class="bottom-nav">
+            <div class="nav-indicator" id="nav-indicator"></div>
+            <button class="nav-button active" data-section="builds">Сборки</button>
+            <button class="nav-button" data-section="redesigns">Редизайны</button>
+            <button class="nav-button" data-section="admin">Админ-панель</button>
         </nav>
-
-        <!-- Модальное окно для входа -->
-        <div class="modal" id="loginModal">
-            <div class="modal-content">
-                <span class="close-modal">&times;</span>
-                <h2>Вход в админ панель</h2>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <input type="password" id="password" placeholder="Пароль" required>
-                    </div>
-                    <button type="submit" class="btn">Войти</button>
-                </form>
-                <p id="loginError" class="error-message"></p>
-            </div>
-        </div>
-
-        <!-- Модальное окно для создания поста -->
-        <div class="modal" id="postModal">
-            <div class="modal-content">
-                <span class="close-modal">&times;</span>
-                <h2>Создать пост</h2>
-                <form id="postForm">
-                    <div class="form-group">
-                        <textarea id="postDescription" placeholder="Описание поста" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="postImage" class="file-label">
-                            <i class="fas fa-image"></i> Выбрать изображение
-                            <input type="file" id="postImage" accept="image/*" required>
-                        </label>
-                        <div id="imagePreview"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="postFile" class="file-label">
-                            <i class="fas fa-file-archive"></i> Выбрать файл
-                            <input type="file" id="postFile" required>
-                        </label>
-                        <div id="fileInfo"></div>
-                    </div>
-                    <button type="submit" class="btn">Выложить</button>
-                </form>
+        
+        <!-- Модальные окна -->
+        <div class="modal-overlay" id="modal-overlay" style="display: none;">
+            <div class="modal-container">
+                <!-- Содержимое модального окна будет загружаться динамически -->
+                <button class="close-modal">✕</button>
             </div>
         </div>
     </div>
+    
+    <script>
+        // Основная логика приложения
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация приложения
+            initApp();
+        });
 
-    <script src="script.js"></script>
+        // Основные переменные
+        let currentSection = 'builds';
+        let posts = {
+            builds: [],
+            redesigns: []
+        };
+        const adminPasswords = ['Admwb3', 'sL9kss', 'i5AsdP', 'aGh67f', 'aErm87'];
+        let isAdmin = localStorage.getItem('bw-admin-auth') === 'true';
+
+        // Инициализация приложения
+        function initApp() {
+            loadPostsFromStorage();
+            setupNavigation();
+            setupSearch();
+            renderContent();
+            setupModalClose();
+            updateNavIndicator();
+        }
+
+        // Загрузка постов из localStorage
+        function loadPostsFromStorage() {
+            const savedPosts = localStorage.getItem('bw-posts');
+            if (savedPosts) {
+                posts = JSON.parse(savedPosts);
+            } else {
+                // Пример начальных данных
+                posts = {
+                    builds: [
+                        {
+                            id: 1,
+                            title: 'Пример сборки',
+                            description: 'Это пример сборки. Администраторы могут добавлять новые.',
+                            bannerUrl: '',
+                            fileUrl: ''
+                        }
+                    ],
+                    redesigns: [
+                        {
+                            id: 1,
+                            title: 'Пример редизайна',
+                            description: 'Это пример редизайна. Администраторы могут добавлять новые.',
+                            bannerUrl: '',
+                            fileUrl: ''
+                        }
+                    ]
+                };
+                savePostsToStorage();
+            }
+        }
+
+        // Сохранение постов в localStorage
+        function savePostsToStorage() {
+            localStorage.setItem('bw-posts', JSON.stringify(posts));
+        }
+
+        // Настройка навигации
+        function setupNavigation() {
+            const navButtons = document.querySelectorAll('.nav-button');
+            
+            navButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Удаляем активный класс у всех кнопок
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Добавляем активный класс текущей кнопке
+                    this.classList.add('active');
+                    
+                    // Меняем текущий раздел
+                    currentSection = this.dataset.section;
+                    
+                    // Обновляем индикатор
+                    updateNavIndicator();
+                    
+                    // Рендерим контент
+                    renderContent();
+                });
+            });
+        }
+
+        // Обновление индикатора навигации
+        function updateNavIndicator() {
+            const indicator = document.getElementById('nav-indicator');
+            const activeButton = document.querySelector('.nav-button.active');
+            
+            if (activeButton) {
+                const buttonRect = activeButton.getBoundingClientRect();
+                const navRect = activeButton.parentElement.getBoundingClientRect();
+                
+                indicator.style.width = `${buttonRect.width}px`;
+                indicator.style.left = `${buttonRect.left - navRect.left}px`;
+            }
+        }
+
+        // Рендер контента в зависимости от текущего раздела
+        function renderContent() {
+            const appContent = document.getElementById('app-content');
+            
+            // Очищаем контент
+            appContent.innerHTML = '';
+            
+            // Добавляем класс для анимации
+            appContent.classList.add('fade-in');
+            
+            // Убираем класс анимации после ее завершения
+            setTimeout(() => {
+                appContent.classList.remove('fade-in');
+            }, 300);
+            
+            switch(currentSection) {
+                case 'builds':
+                case 'redesigns':
+                    renderPosts(currentSection);
+                    break;
+                case 'admin':
+                    renderAdminPanel();
+                    break;
+                default:
+                    renderPosts('builds');
+            }
+        }
+
+        // Рендер постов
+        function renderPosts(section) {
+            const appContent = document.getElementById('app-content');
+            
+            if (posts[section].length === 0) {
+                appContent.innerHTML = '<p class="no-posts">Пока нет постов в этом разделе</p>';
+                return;
+            }
+            
+            posts[section].forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.className = 'post';
+                
+                let bannerContent = '';
+                if (post.bannerUrl) {
+                    if (post.bannerUrl.startsWith('data:')) {
+                        bannerContent = `<img src="${post.bannerUrl}" alt="${post.title}" class="post-banner">`;
+                    } else {
+                        bannerContent = `<div class="post-banner-placeholder">Нет изображения</div>`;
+                    }
+                } else {
+                    bannerContent = `<div class="post-banner-placeholder">Нет изображения</div>`;
+                }
+                
+                postElement.innerHTML = `
+                    ${bannerContent}
+                    <div class="post-content">
+                        <h3 class="post-title">${post.title}</h3>
+                        <p class="post-description">${post.description}</p>
+                        ${post.fileUrl ? `<button class="download-button" data-url="${post.fileUrl}">Скачать</button>` : '<p class="no-file">Файл не прикреплен</p>'}
+                        ${isAdmin ? `
+                        <div class="post-actions">
+                            <button class="admin-button edit-post" data-id="${post.id}">Редактировать</button>
+                            <button class="admin-button delete-post" data-id="${post.id}">Удалить</button>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                appContent.appendChild(postElement);
+            });
+            
+            // Настройка кнопок скачивания
+            setupDownloadButtons();
+            
+            // Если админ, настраиваем кнопки управления постами
+            if (isAdmin) {
+                setupPostManagementButtons(section);
+            }
+        }
+
+        // Настройка кнопок скачивания
+        function setupDownloadButtons() {
+            const downloadButtons = document.querySelectorAll('.download-button');
+            
+            downloadButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const fileUrl = this.getAttribute('data-url');
+                    startDownload(fileUrl);
+                });
+            });
+        }
+
+        // Начало загрузки файла
+        function startDownload(fileUrl) {
+            if (fileUrl.startsWith('data:')) {
+                // Для Data URL создаем временную ссылку
+                const link = document.createElement('a');
+                link.href = fileUrl;
+                link.download = 'Akermasex Team';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else if (fileUrl) {
+                // Для внешних ссылок открываем в новой вкладке
+                window.open(fileUrl, '_blank');
+            }
+        }
+
+        // Настройка кнопок управления постами (для админа)
+        function setupPostManagementButtons(section) {
+            // Кнопки редактирования
+            const editButtons = document.querySelectorAll('.edit-post');
+            editButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const postId = parseInt(this.getAttribute('data-id'));
+                    const post = posts[section].find(p => p.id === postId);
+                    showEditPostModal(post, section);
+                });
+            });
+            
+            // Кнопки удаления
+            const deleteButtons = document.querySelectorAll('.delete-post');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const postId = parseInt(this.getAttribute('data-id'));
+                    if (confirm('Вы уверены, что хотите удалить этот пост?')) {
+                        deletePost(postId, section);
+                    }
+                });
+            });
+        }
+
+        // Удаление поста
+        function deletePost(postId, section) {
+            posts[section] = posts[section].filter(post => post.id !== postId);
+            savePostsToStorage();
+            renderContent();
+        }
+
+        // Настройка поиска
+        function setupSearch() {
+            const searchInput = document.querySelector('.search-input');
+            const searchButton = document.querySelector('.search-button');
+            
+            searchButton.addEventListener('click', performSearch);
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+        }
+
+        // Выполнение поиска
+        function performSearch() {
+            const searchTerm = document.querySelector('.search-input').value.toLowerCase();
+            
+            if (!searchTerm) {
+                renderContent();
+                return;
+            }
+            
+            const appContent = document.getElementById('app-content');
+            appContent.innerHTML = '';
+            
+            // Ищем во всех разделах
+            let foundPosts = [];
+            
+            Object.keys(posts).forEach(section => {
+                posts[section].forEach(post => {
+                    if (post.title.toLowerCase().includes(searchTerm) || 
+                        post.description.toLowerCase().includes(searchTerm)) {
+                        foundPosts.push({...post, section});
+                    }
+                });
+            });
+            
+            if (foundPosts.length === 0) {
+                appContent.innerHTML = '<p class="no-posts">Ничего не найдено</p>';
+                return;
+            }
+            
+            foundPosts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.className = 'post';
+                
+                let bannerContent = '';
+                if (post.bannerUrl) {
+                    if (post.bannerUrl.startsWith('data:')) {
+                        bannerContent = `<img src="${post.bannerUrl}" alt="${post.title}" class="post-banner">`;
+                    } else {
+                        bannerContent = `<div class="post-banner-placeholder">Нет изображения</div>`;
+                    }
+                } else {
+                    bannerContent = `<div class="post-banner-placeholder">Нет изображения</div>`;
+                }
+                
+                postElement.innerHTML = `
+                    ${bannerContent}
+                    <div class="post-content">
+                        <h3 class="post-title">${post.title} <small>(${post.section === 'builds' ? 'Сборка' : 'Редизайн'})</small></h3>
+                        <p class="post-description">${post.description}</p>
+                        ${post.fileUrl ? `<button class="download-button" data-url="${post.fileUrl}">Скачать</button>` : '<p class="no-file">Файл не прикреплен</p>'}
+                    </div>
+                `;
+                
+                appContent.appendChild(postElement);
+            });
+            
+            setupDownloadButtons();
+        }
+
+        // Рендер админ-панели
+        function renderAdminPanel() {
+            const appContent = document.getElementById('app-content');
+            
+            if (!isAdmin) {
+                showAdminLogin();
+                return;
+            }
+            
+            appContent.innerHTML = `
+                <div class="admin-panel">
+                    <div class="admin-section">
+                        <h2>Управление постами</h2>
+                        <div>
+                            <button class="admin-button" id="add-build">Добавить сборку</button>
+                            <button class="admin-button" id="add-redesign">Добавить редизайн</button>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-section">
+                        <h2>Статистика</h2>
+                        <p>Всего сборок: ${posts.builds.length}</p>
+                        <p>Всего редизайнов: ${posts.redesigns.length}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Настройка кнопок админ-панели
+            document.getElementById('add-build').addEventListener('click', () => {
+                showAddPostModal('builds');
+            });
+            
+            document.getElementById('add-redesign').addEventListener('click', () => {
+                showAddPostModal('redesigns');
+            });
+        }
+
+        // Показать окно входа для админа
+        function showAdminLogin() {
+            const modalOverlay = document.getElementById('modal-overlay');
+            const modalContainer = document.querySelector('.modal-container');
+            
+            modalContainer.innerHTML = `
+                <h2 class="modal-title">Вход в админ-панель</h2>
+                <div class="form-group">
+                    <label for="admin-password" class="form-label">Пароль:</label>
+                    <input type="password" id="admin-password" class="form-input" placeholder="Введите пароль">
+                </div>
+                <button class="submit-button" id="login-admin">Войти</button>
+            `;
+            
+            modalOverlay.style.display = 'flex';
+            
+            // Настройка кнопки входа
+            document.getElementById('login-admin').addEventListener('click', () => {
+                const password = document.getElementById('admin-password').value;
+                
+                if (adminPasswords.includes(password)) {
+                    isAdmin = true;
+                    localStorage.setItem('bw-admin-auth', 'true');
+                    modalOverlay.style.display = 'none';
+                    renderContent();
+                } else {
+                    alert('Неверный пароль!');
+                }
+            });
+        }
+
+        // Показать модальное окно добавления поста
+        function showAddPostModal(section) {
+            const modalOverlay = document.getElementById('modal-overlay');
+            const modalContainer = document.querySelector('.modal-container');
+            
+            modalContainer.innerHTML = `
+                <h2 class="modal-title">Добавить ${section === 'builds' ? 'сборку' : 'редизайн'}</h2>
+                <div class="form-group">
+                    <label for="post-title" class="form-label">Название:</label>
+                    <input type="text" id="post-title" class="form-input" placeholder="Введите название">
+                </div>
+                
+                <div class="form-group">
+                    <label for="post-description" class="form-label">Описание:</label>
+                    <textarea id="post-description" class="form-textarea" placeholder="Введите описание"></textarea>
+                </div>
+                
+                <label class="file-input-label">
+                    Выбрать баннер
+                    <input type="file" id="post-banner" class="file-input" accept="image/*">
+                </label>
+                
+                <label class="file-input-label">
+                    Выбрать файл
+                    <input type="file" id="post-file" class="file-input">
+                </label>
+                
+                <div class="preview-container" id="banner-preview" style="display: none;">
+                    <h3>Предпросмотр баннера:</h3>
+                    <img src="" alt="Предпросмотр баннера" class="preview-banner" id="banner-preview-img">
+                </div>
+                
+                <button class="submit-button" id="preview-post">Показать результат</button>
+                <div id="post-preview-container"></div>
+            `;
+            
+            modalOverlay.style.display = 'flex';
+            
+            // Превью баннера
+            document.getElementById('post-banner').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const previewContainer = document.getElementById('banner-preview');
+                        const previewImg = document.getElementById('banner-preview-img');
+                        
+                        previewImg.src = event.target.result;
+                        previewContainer.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Кнопка предпросмотра
+            document.getElementById('preview-post').addEventListener('click', function() {
+                const title = document.getElementById('post-title').value;
+                const description = document.getElementById('post-description').value;
+                const bannerFile = document.getElementById('post-banner').files[0];
+                const file = document.getElementById('post-file').files[0];
+                
+                if (!title || !description) {
+                    alert('Заполните название и описание!');
+                    return;
+                }
+                
+                // Создаем Data URL для изображения и файла
+                let bannerUrl = '';
+                let fileUrl = '';
+                
+                const previewContainer = document.getElementById('post-preview-container');
+                previewContainer.innerHTML = '';
+                
+                if (bannerFile) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        bannerUrl = event.target.result;
+                        showPostPreview(title, description, bannerUrl, fileUrl, section, previewContainer);
+                    };
+                    reader.readAsDataURL(bannerFile);
+                } else {
+                    showPostPreview(title, description, bannerUrl, fileUrl, section, previewContainer);
+                }
+                
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        fileUrl = event.target.result;
+                        showPostPreview(title, description, bannerUrl, fileUrl, section, previewContainer);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Показать предпросмотр поста
+        function showPostPreview(title, description, bannerUrl, fileUrl, section, container) {
+            // Удаляем старый предпросмотр, если есть
+            container.innerHTML = '';
+            
+            // Показываем предпросмотр
+            container.innerHTML = `
+                <div class="post-preview">
+                    <h3>Предпросмотр поста:</h3>
+                    <div class="post">
+                        ${bannerUrl ? `<img src="${bannerUrl}" alt="${title}" class="post-banner">` : '<div class="post-banner-placeholder">Нет изображения</div>'}
+                        <div class="post-content">
+                            <h3 class="post-title">${title}</h3>
+                            <p class="post-description">${description}</p>
+                            ${fileUrl ? `<button class="download-button" data-url="${fileUrl}">Скачать</button>` : '<p class="no-file">Файл не прикреплен</p>'}
+                        </div>
+                    </div>
+                </div>
+                <button class="submit-button" id="submit-post">Опубликовать</button>
+            `;
+            
+            // Настраиваем кнопку скачивания в предпросмотре
+            const previewDownloadBtn = container.querySelector('.download-button');
+            if (previewDownloadBtn) {
+                previewDownloadBtn.addEventListener('click', function() {
+                    const url = this.getAttribute('data-url');
+                    startDownload(url);
+                });
+            }
+            
+            // Настраиваем кнопку публикации
+            document.getElementById('submit-post').addEventListener('click', function() {
+                const title = document.getElementById('post-title').value;
+                const description = document.getElementById('post-description').value;
+                const bannerFile = document.getElementById('post-banner').files[0];
+                const file = document.getElementById('post-file').files[0];
+                
+                let bannerUrl = '';
+                let fileUrl = '';
+                
+                // Обрабатываем баннер
+                if (bannerFile) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        bannerUrl = event.target.result;
+                        processFileUpload(file, title, description, bannerUrl, section);
+                    };
+                    reader.readAsDataURL(bannerFile);
+                } else {
+                    processFileUpload(file, title, description, bannerUrl, section);
+                }
+            });
+        }
+
+        // Обработка загрузки файла и создание поста
+        function processFileUpload(file, title, description, bannerUrl, section) {
+            let fileUrl = '';
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    fileUrl = event.target.result;
+                    createNewPost(title, description, bannerUrl, fileUrl, section);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                createNewPost(title, description, bannerUrl, fileUrl, section);
+            }
+        }
+
+        // Создание нового поста
+        function createNewPost(title, description, bannerUrl, fileUrl, section) {
+            const newPost = {
+                id: Date.now(), // Используем timestamp как ID
+                title,
+                description,
+                bannerUrl,
+                fileUrl
+            };
+            
+            // Добавляем пост в соответствующий раздел
+            posts[section].unshift(newPost);
+            savePostsToStorage();
+            
+            // Закрываем модальное окно
+            document.getElementById('modal-overlay').style.display = 'none';
+            
+            // Обновляем контент
+            renderContent();
+        }
+
+        // Показать модальное окно редактирования поста
+        function showEditPostModal(post, section) {
+            const modalOverlay = document.getElementById('modal-overlay');
+            const modalContainer = document.querySelector('.modal-container');
+            
+            modalContainer.innerHTML = `
+                <h2 class="modal-title">Редактировать пост</h2>
+                <div class="form-group">
+                    <label for="edit-post-title" class="form-label">Название:</label>
+                    <input type="text" id="edit-post-title" class="form-input" value="${post.title}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-post-description" class="form-label">Описание:</label>
+                    <textarea id="edit-post-description" class="form-textarea">${post.description}</textarea>
+                </div>
+                
+                <div class="preview-container">
+                    <h3>Текущий баннер:</h3>
+                    ${post.bannerUrl ? `<img src="${post.bannerUrl}" alt="${post.title}" class="preview-banner">` : '<p>Нет изображения</p>'}
+                </div>
+                
+                <label class="file-input-label">
+                    Изменить баннер
+                    <input type="file" id="edit-post-banner" class="file-input" accept="image/*">
+                </label>
+                
+                <div class="form-group">
+                    <label class="form-label">Текущий файл:</label>
+                    ${post.fileUrl ? `<p>Файл прикреплен</p>` : '<p>Файл не прикреплен</p>'}
+                </div>
+                
+                <label class="file-input-label">
+                    Изменить файл
+                    <input type="file" id="edit-post-file" class="file-input">
+                </label>
+                
+                <button class="submit-button" id="update-post">Обновить</button>
+            `;
+            
+            modalOverlay.style.display = 'flex';
+            
+            // Кнопка обновления
+            document.getElementById('update-post').addEventListener('click', function() {
+                const title = document.getElementById('edit-post-title').value;
+                const description = document.getElementById('edit-post-description').value;
+                const bannerFile = document.getElementById('edit-post-banner').files[0];
+                const file = document.getElementById('edit-post-file').files[0];
+                
+                // Находим пост для обновления
+                const postIndex = posts[section].findIndex(p => p.id === post.id);
+                
+                if (postIndex !== -1) {
+                    // Обновляем текстовые данные
+                    posts[section][postIndex].title = title;
+                    posts[section][postIndex].description = description;
+                    
+                    // Обновляем баннер, если выбран новый
+                    if (bannerFile) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            posts[section][postIndex].bannerUrl = event.target.result;
+                            finishPostUpdate(section);
+                        };
+                        reader.readAsDataURL(bannerFile);
+                    } else {
+                        finishPostUpdate(section);
+                    }
+                    
+                    // Обновляем файл, если выбран новый
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            posts[section][postIndex].fileUrl = event.target.result;
+                            finishPostUpdate(section);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }
+            });
+        }
+
+        // Завершение обновления поста
+        function finishPostUpdate(section) {
+            savePostsToStorage();
+            document.getElementById('modal-overlay').style.display = 'none';
+            renderContent();
+        }
+
+        // Настройка закрытия модального окна
+        function setupModalClose() {
+            document.querySelector('.close-modal').addEventListener('click', () => {
+                document.getElementById('modal-overlay').style.display = 'none';
+            });
+            
+            document.getElementById('modal-overlay').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('modal-overlay')) {
+                    document.getElementById('modal-overlay').style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
