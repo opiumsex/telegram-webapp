@@ -1,22 +1,28 @@
-// Данные приложения
-const appData = {
+// Конфигурация приложения
+const CONFIG = {
+    // 5 паролей администраторов (замените на свои)
+    ADMIN_PASSWORDS: [
+        "AlphaAdmin123!",
+        "BetaSecure456@",
+        "GammaAccess789#",
+        "DeltaControl000$",
+        "EpsilonPower111%"
+    ],
+    GITHUB: {
+        REPO: 'telegram-webapp', // Замените на свой
+        BRANCH: 'main',
+        TOKEN: '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' // Замените на свой
+    },
+    STORAGE_KEY: 'telegram_files_data'
+};
+
+// Состояние приложения
+const state = {
     currentSection: 'builds',
     isAdmin: false,
-    // Пароль для входа в админку (ЗАМЕНИТЕ НА СВОЙ)
-    adminPassword: "As12fr90hswjHipGGGll1891488",
-    adminPassword: "Slf1488farGGHHeEwUUid770oo",
-    adminPassword: "Gjtspmhgs1325963hhsuysqqqqq",
-    adminPassword: "fHoy652s00mhsjjHhhKKHGgGjjjj",
-    adminPassword: "Sgpyedgbvajll345nbsja78AdFGa22",
     posts: {
         builds: [],
         redesigns: []
-    },
-    // Настройки GitHub (ЗАМЕНИТЕ НА СВОИ)
-    github: {
-        repo: 'telegram-webapp', // Ваш репозиторий
-        branch: 'main',
-        token: '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' // GitHub Personal Access Token
     }
 };
 
@@ -33,108 +39,126 @@ const elements = {
 };
 
 // Инициализация приложения
-function initApp() {
-    loadData();
+function init() {
+    loadFromLocalStorage();
     setupEventListeners();
-    loadSection(appData.currentSection);
-}
-
-function loadData() {
-    const savedData = localStorage.getItem('telegramFilesAppData');
-    if (savedData) {
-        appData.posts = JSON.parse(savedData).posts || {
-            builds: [],
-            redesigns: []
-        };
+    loadSection(state.currentSection);
+    
+    // Пример начальных данных (можно удалить)
+    if (state.posts.builds.length === 0 && state.posts.redesigns.length === 0) {
+        state.posts.builds.push({
+            id: 1,
+            description: 'Пример сборки Telegram',
+            imageUrl: 'https://via.placeholder.com/500x300?text=Example+Build',
+            fileUrl: 'https://github.com/ваш_логин/ваш_репозиторий/raw/main/assembly/files/example.zip',
+            fileName: 'example_build.zip',
+            author: 'system',
+            date: new Date().toISOString().split('T')[0]
+        });
+        saveToLocalStorage();
     }
 }
 
-function saveData() {
-    localStorage.setItem('telegramFilesAppData', JSON.stringify({
-        posts: appData.posts
+// Работа с локальным хранилищем
+function loadFromLocalStorage() {
+    const savedData = localStorage.getItem(CONFIG.STORAGE_KEY);
+    if (savedData) {
+        Object.assign(state, JSON.parse(savedData));
+    }
+}
+
+function saveToLocalStorage() {
+    localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify({
+        posts: state.posts,
+        isAdmin: state.isAdmin
     }));
 }
 
+// Настройка событий
 function setupEventListeners() {
+    // Навигация
     elements.navItems.forEach(item => {
         item.addEventListener('click', () => {
             const section = item.getAttribute('data-section');
-            if (section === 'admin' && !appData.isAdmin) {
+            if (section === 'admin' && !state.isAdmin) {
                 showLoginModal();
             } else {
-                appData.currentSection = section;
+                state.currentSection = section;
                 loadSection(section);
                 updateNavIndicator();
             }
         });
     });
     
-    elements.loginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        handleLogin();
-    });
+    // Формы
+    elements.loginForm.addEventListener('submit', handleLogin);
+    elements.postForm.addEventListener('submit', handlePostSubmit);
     
-    elements.postForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        handlePostCreation();
-    });
-    
+    // Модальные окна
     document.querySelectorAll('.close-modal').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.style.display = 'none';
-            });
-        });
+        btn.addEventListener('click', closeAllModals);
     });
     
-    window.addEventListener('click', (e) => {
+    document.addEventListener('click', (e) => {
         if (e.target.classList.contains('modal')) {
-            e.target.style.display = 'none';
+            closeAllModals();
         }
     });
 }
 
+// Навигация
 function updateNavIndicator() {
     const activeIndex = Array.from(elements.navItems).findIndex(
-        item => item.getAttribute('data-section') === appData.currentSection
+        item => item.getAttribute('data-section') === state.currentSection
     );
     
     elements.navIndicator.style.left = `${activeIndex * 33.33}%`;
-    
     elements.navItems.forEach(item => {
         item.classList.toggle('active', 
-            item.getAttribute('data-section') === appData.currentSection);
+            item.getAttribute('data-section') === state.currentSection);
     });
 }
 
+// Загрузка разделов
 function loadSection(section) {
-    elements.appContent.innerHTML = '';
-    
-    const loader = document.createElement('div');
-    loader.className = 'loader';
-    loader.innerHTML = '<div class="spinner"></div>';
-    elements.appContent.appendChild(loader);
+    showLoader();
     
     setTimeout(() => {
-        elements.appContent.innerHTML = '';
+        clearContent();
         
         if (section === 'admin') {
             renderAdminPanel();
         } else {
             renderPosts(section);
-            if (appData.isAdmin) showCreatePostButton();
+            if (state.isAdmin) {
+                showCreatePostButton();
+            }
         }
-    }, 500);
+    }, 300);
 }
 
+function showLoader() {
+    elements.appContent.innerHTML = `
+        <div class="loader">
+            <div class="spinner"></div>
+        </div>
+    `;
+}
+
+function clearContent() {
+    elements.appContent.innerHTML = '';
+}
+
+// Рендер постов
 function renderPosts(section) {
-    const posts = appData.posts[section] || [];
+    const posts = state.posts[section] || [];
     
     if (posts.length === 0) {
-        const emptyMessage = document.createElement('div');
-        emptyMessage.className = 'empty-message';
-        emptyMessage.textContent = 'Пока нет постов в этом разделе';
-        elements.appContent.appendChild(emptyMessage);
+        elements.appContent.innerHTML = `
+            <div class="empty-message">
+                Пока нет постов в этом разделе
+            </div>
+        `;
         return;
     }
     
@@ -144,105 +168,99 @@ function renderPosts(section) {
         postElement.innerHTML = `
             <img src="${post.imageUrl}" alt="Изображение поста" class="post-image">
             <p class="post-description">${post.description}</p>
-            <button class="download-btn" data-url="${post.fileUrl}" data-name="${post.fileName}">Скачать</button>
+            <button class="download-btn" 
+                    data-url="${post.fileUrl}" 
+                    data-name="${post.fileName}">
+                Скачать
+            </button>
         `;
         elements.appContent.appendChild(postElement);
     });
     
+    // Обработчики скачивания
     document.querySelectorAll('.download-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const url = e.target.getAttribute('data-url');
-            const fileName = e.target.getAttribute('data-name');
-            downloadFile(url, fileName);
+            const name = e.target.getAttribute('data-name');
+            downloadFile(url, name);
         });
     });
 }
 
+// Админ панель
 function renderAdminPanel() {
-    const adminPanel = document.createElement('div');
-    adminPanel.className = 'admin-panel';
-    adminPanel.innerHTML = '<h2>Админ панель</h2>';
+    elements.appContent.innerHTML = `
+        <div class="admin-panel">
+            <h2>Админ панель</h2>
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-section="builds">Сборки</button>
+                <button class="admin-tab" data-section="redesigns">Редизайны</button>
+            </div>
+            <div id="adminPostsContainer"></div>
+        </div>
+    `;
     
-    const tabs = document.createElement('div');
-    tabs.className = 'admin-tabs';
-    
-    const buildsTab = document.createElement('button');
-    buildsTab.className = 'admin-tab active';
-    buildsTab.textContent = 'Сборки';
-    buildsTab.addEventListener('click', () => renderAdminPosts('builds'));
-    
-    const redesignsTab = document.createElement('button');
-    redesignsTab.className = 'admin-tab';
-    redesignsTab.textContent = 'Редизайны';
-    redesignsTab.addEventListener('click', () => renderAdminPosts('redesigns'));
-    
-    tabs.append(buildsTab, redesignsTab);
-    adminPanel.appendChild(tabs);
-    
-    const postsContainer = document.createElement('div');
-    postsContainer.id = 'adminPostsContainer';
-    adminPanel.appendChild(postsContainer);
-    
-    elements.appContent.appendChild(adminPanel);
-    renderAdminPosts('builds');
-    
+    // Табы
     document.querySelectorAll('.admin-tab').forEach(tab => {
         tab.addEventListener('click', () => {
             document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
+            renderAdminPosts(tab.getAttribute('data-section'));
         });
     });
+    
+    renderAdminPosts('builds');
 }
 
 function renderAdminPosts(section) {
-    const postsContainer = document.getElementById('adminPostsContainer');
-    postsContainer.innerHTML = '';
-    
-    const posts = appData.posts[section] || [];
+    const container = document.getElementById('adminPostsContainer');
+    const posts = state.posts[section] || [];
     
     if (posts.length === 0) {
-        const emptyMessage = document.createElement('div');
-        emptyMessage.className = 'empty-message';
-        emptyMessage.textContent = 'Пока нет постов в этом разделе';
-        postsContainer.appendChild(emptyMessage);
+        container.innerHTML = `
+            <div class="empty-message">
+                Пока нет постов в этом разделе
+            </div>
+        `;
         return;
     }
     
-    posts.forEach(post => {
-        const postElement = document.createElement('div');
-        postElement.className = 'admin-post fade-in';
-        postElement.innerHTML = `
+    container.innerHTML = posts.map(post => `
+        <div class="admin-post fade-in">
             <div class="post-info">
                 <h3>${post.description}</h3>
                 <small>Автор: ${post.author} | Дата: ${post.date}</small>
             </div>
             <div class="admin-actions">
-                <button class="admin-btn edit-btn" data-id="${post.id}" data-section="${section}">Редактировать</button>
-                <button class="admin-btn delete-btn" data-id="${post.id}" data-section="${section}">Удалить</button>
+                <button class="admin-btn edit-btn" 
+                        data-id="${post.id}" 
+                        data-section="${section}">
+                    Редактировать
+                </button>
+                <button class="admin-btn delete-btn" 
+                        data-id="${post.id}" 
+                        data-section="${section}">
+                    Удалить
+                </button>
             </div>
-        `;
-        postsContainer.appendChild(postElement);
-    });
+        </div>
+    `).join('');
     
+    // Обработчики действий
     document.querySelectorAll('.edit-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const id = parseInt(e.target.getAttribute('data-id'));
-            const section = e.target.getAttribute('data-section');
-            editPost(id, section);
-        });
+        btn.addEventListener('click', handleEditPost);
     });
     
     document.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const id = parseInt(e.target.getAttribute('data-id'));
-            const section = e.target.getAttribute('data-section');
-            deletePost(id, section);
-        });
+        btn.addEventListener('click', handleDeletePost);
     });
 }
 
+// Кнопка создания поста
 function showCreatePostButton() {
-    if (elements.createPostBtn) elements.createPostBtn.remove();
+    if (elements.createPostBtn) {
+        elements.createPostBtn.remove();
+    }
     
     elements.createPostBtn = document.createElement('div');
     elements.createPostBtn.className = 'create-post-btn';
@@ -251,60 +269,78 @@ function showCreatePostButton() {
     document.body.appendChild(elements.createPostBtn);
 }
 
+// Модальные окна
 function showLoginModal() {
     elements.loginModal.style.display = 'flex';
     document.getElementById('loginError').textContent = '';
 }
 
 function showPostModal() {
-    elements.postForm.reset();
-    document.getElementById('imagePreview').innerHTML = '';
-    document.getElementById('fileInfo').innerHTML = '';
-    
-    document.getElementById('postImage').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                document.getElementById('imagePreview').innerHTML = `
-                    <img src="${event.target.result}" alt="Предпросмотр" style="max-width: 100%; margin-top: 10px; border-radius: 5px;">
-                `;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-    
-    document.getElementById('postFile').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            document.getElementById('fileInfo').innerHTML = `
-                <p style="margin-top: 10px;">Файл: ${file.name}</p>
-                <p>Размер: ${(file.size / 1024 / 1024).toFixed(2)} MB</p>
-            `;
-        }
-    });
-    
+    resetPostForm();
+    setupFilePreview('postImage', 'imagePreview');
+    setupFilePreview('postFile', 'fileInfo');
     elements.postModal.style.display = 'flex';
 }
 
+function closeAllModals() {
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.style.display = 'none';
+    });
+}
+
+function resetPostForm() {
+    elements.postForm.reset();
+    document.getElementById('imagePreview').innerHTML = '';
+    document.getElementById('fileInfo').innerHTML = '';
+}
+
+function setupFilePreview(inputId, previewId) {
+    document.getElementById(inputId).addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const preview = document.getElementById(previewId);
+            if (inputId === 'postImage') {
+                preview.innerHTML = `
+                    <img src="${event.target.result}" 
+                         alt="Предпросмотр" 
+                         style="max-width: 100%; margin-top: 10px; border-radius: 5px;">
+                `;
+            } else {
+                preview.innerHTML = `
+                    <p style="margin-top: 10px;">Файл: ${file.name}</p>
+                    <p>Размер: ${(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                `;
+            }
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+// Обработчики форм
 function handleLogin(e) {
     e.preventDefault();
     const password = document.getElementById('password').value;
     
-    if (password === appData.adminPassword) {
-        appData.isAdmin = true;
-        elements.loginModal.style.display = 'none';
+    if (CONFIG.ADMIN_PASSWORDS.includes(password)) {
+        state.isAdmin = true;
+        saveToLocalStorage();
+        closeAllModals();
         loadSection('admin');
     } else {
         document.getElementById('loginError').textContent = 'Неверный пароль';
     }
 }
 
-async function handlePostCreation() {
+async function handlePostSubmit(e) {
+    e.preventDefault();
+    
     const description = document.getElementById('postDescription').value;
     const imageFile = document.getElementById('postImage').files[0];
     const file = document.getElementById('postFile').files[0];
-    const section = appData.currentSection;
+    const section = state.currentSection;
     
     if (!description || !imageFile || !file) {
         alert('Заполните все поля!');
@@ -312,8 +348,10 @@ async function handlePostCreation() {
     }
     
     try {
-        const imageUrl = await uploadToGitHub(imageFile, 'images');
-        const fileUrl = await uploadToGitHub(file, 'files');
+        const [imageUrl, fileUrl] = await Promise.all([
+            uploadToGitHub(imageFile, 'images'),
+            uploadToGitHub(file, 'files')
+        ]);
         
         const newPost = {
             id: Date.now(),
@@ -325,11 +363,11 @@ async function handlePostCreation() {
             date: new Date().toISOString().split('T')[0]
         };
         
-        if (!appData.posts[section]) appData.posts[section] = [];
-        appData.posts[section].unshift(newPost);
-        saveData();
+        if (!state.posts[section]) state.posts[section] = [];
+        state.posts[section].unshift(newPost);
+        saveToLocalStorage();
         
-        elements.postModal.style.display = 'none';
+        closeAllModals();
         loadSection(section);
     } catch (error) {
         console.error('Ошибка:', error);
@@ -337,25 +375,26 @@ async function handlePostCreation() {
     }
 }
 
+// Работа с GitHub
 async function uploadToGitHub(file, folder) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = async function(e) {
-            const content = e.target.result.split(',')[1];
-            const filename = `${folder}/${Date.now()}_${file.name}`;
-            const apiUrl = `https://api.github.com/repos/${appData.github.repo}/contents/assembly/${filename}`;
-            
             try {
+                const content = e.target.result.split(',')[1];
+                const filename = `${folder}/${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+                const apiUrl = `https://api.github.com/repos/${CONFIG.GITHUB.REPO}/contents/assembly/${filename}`;
+                
                 const response = await fetch(apiUrl, {
                     method: 'PUT',
                     headers: {
-                        'Authorization': `token ${appData.github.token}`,
+                        'Authorization': `token ${CONFIG.GITHUB.TOKEN}`,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         message: `Add ${filename}`,
                         content,
-                        branch: appData.github.branch
+                        branch: CONFIG.GITHUB.BRANCH
                     })
                 });
                 
@@ -373,67 +412,74 @@ async function uploadToGitHub(file, folder) {
     });
 }
 
-function editPost(id, section) {
-    const post = appData.posts[section].find(p => p.id === id);
+// Действия с постами
+function handleEditPost(e) {
+    const id = parseInt(e.target.getAttribute('data-id'));
+    const section = e.target.getAttribute('data-section');
+    const post = state.posts[section].find(p => p.id === id);
+    
     if (!post) return;
     
     showPostModal();
     document.getElementById('postDescription').value = post.description;
     document.getElementById('imagePreview').innerHTML = `
-        <img src="${post.imageUrl}" alt="Текущее изображение" style="max-width: 100%; margin-top: 10px; border-radius: 5px;">
+        <img src="${post.imageUrl}" 
+             alt="Текущее изображение" 
+             style="max-width: 100%; margin-top: 10px; border-radius: 5px;">
     `;
     document.getElementById('fileInfo').innerHTML = `
         <p style="margin-top: 10px;">Текущий файл: ${post.fileName}</p>
     `;
     
     const form = document.getElementById('postForm');
-    form.removeEventListener('submit', handlePostCreation);
+    form.removeEventListener('submit', handlePostSubmit);
     
-    form.addEventListener('submit', function handleEdit(e) {
+    form.addEventListener('submit', async function handleEdit(e) {
         e.preventDefault();
         
         const description = document.getElementById('postDescription').value;
         const imageFile = document.getElementById('postImage').files[0];
         const newFile = document.getElementById('postFile').files[0];
         
-        post.description = description;
-        
-        const updateFile = (file, type) => {
-            if (!file) return Promise.resolve();
-            return uploadToGitHub(file, type === 'image' ? 'images' : 'files')
-                .then(url => {
-                    if (type === 'image') post.imageUrl = url;
-                    else {
-                        post.fileUrl = url;
-                        post.fileName = newFile.name;
-                    }
-                });
-        };
-        
-        Promise.all([
-            updateFile(imageFile, 'image'),
-            updateFile(newFile, 'file')
-        ]).then(() => {
-            saveData();
-            elements.postModal.style.display = 'none';
+        try {
+            const updates = await Promise.all([
+                imageFile ? uploadToGitHub(imageFile, 'images').then(url => {
+                    post.imageUrl = url;
+                }) : Promise.resolve(),
+                
+                newFile ? uploadToGitHub(newFile, 'files').then(url => {
+                    post.fileUrl = url;
+                    post.fileName = newFile.name;
+                }) : Promise.resolve()
+            ]);
+            
+            post.description = description;
+            saveToLocalStorage();
+            
+            closeAllModals();
             renderAdminPosts(section);
-            form.removeEventListener('submit', handleEdit);
-            form.addEventListener('submit', handlePostCreation);
-        }).catch(error => {
+        } catch (error) {
             console.error('Ошибка:', error);
             alert('Ошибка при обновлении');
-        });
+        } finally {
+            form.removeEventListener('submit', handleEdit);
+            form.addEventListener('submit', handlePostSubmit);
+        }
     });
 }
 
-function deletePost(id, section) {
-    if (confirm('Вы уверены, что хотите удалить этот пост?')) {
-        appData.posts[section] = appData.posts[section].filter(p => p.id !== id);
-        saveData();
-        renderAdminPosts(section);
-    }
+function handleDeletePost(e) {
+    if (!confirm('Вы уверены, что хотите удалить этот пост?')) return;
+    
+    const id = parseInt(e.target.getAttribute('data-id'));
+    const section = e.target.getAttribute('data-section');
+    
+    state.posts[section] = state.posts[section].filter(p => p.id !== id);
+    saveToLocalStorage();
+    renderAdminPosts(section);
 }
 
+// Вспомогательные функции
 function downloadFile(url, fileName) {
     const a = document.createElement('a');
     a.href = url;
@@ -443,4 +489,5 @@ function downloadFile(url, fileName) {
     document.body.removeChild(a);
 }
 
-document.addEventListener('DOMContentLoaded', initApp);
+// Запуск приложения
+document.addEventListener('DOMContentLoaded', init);
