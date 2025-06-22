@@ -9,9 +9,9 @@ const CONFIG = {
         "EpsilonPower111%"
     ],
     GITHUB: {
-        REPO: 'telegram-webapp', // Замените на свой
+        REPO: 'opiumsex/telegram-webapp', // Замените на свой
         BRANCH: 'main',
-        TOKEN: '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' // Замените на свой
+        TOKEN: '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' // Замените на свой
     },
     STORAGE_KEY: 'telegram_files_data'
 };
