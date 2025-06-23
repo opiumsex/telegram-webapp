@@ -3,83 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Black & White Posts</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <title>AkerKot Converter</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container">
-        <header class="app-header">
-            <div class="search-container">
-                <input type="text" id="search-input" placeholder="Поиск постов...">
-                <button id="search-button">🔍</button>
-            </div>
-        </header>
-        
-        <main class="app-main" id="app-main">
-            <!-- Посты будут загружаться здесь -->
-        </main>
-        
-        <nav class="app-nav">
-            <button class="nav-button active" data-tab="builds">Сборки</button>
-            <button class="nav-button" data-tab="redesigns">Редизайны</button>
-            <button class="nav-button" data-tab="admin">Админ панель</button>
-        </nav>
-        
-        <!-- Модальное окно входа в админку -->
-        <div class="modal" id="admin-login-modal">
-            <div class="modal-content">
-                <span class="close-modal">&times;</span>
-                <h2>Вход в админ панель</h2>
-                <input type="password" id="admin-password" placeholder="Введите пароль">
-                <button id="login-admin" disabled>Войти</button>
-            </div>
+    <div class="background-overlay"></div>
+    
+    <header>
+        <div class="logo">
+            <span class="logo-text">AkerKot</span>
+            <span class="logo-highlight"></span>
         </div>
-        
-        <!-- Модальное окно создания поста -->
-        <div class="modal" id="create-post-modal">
-            <div class="modal-content">
-                <span class="close-modal">&times;</span>
-                <h2>Создать новый пост</h2>
-                
-                <div class="form-group">
-                    <label for="post-title">Название поста:</label>
-                    <input type="text" id="post-title" placeholder="Введите название">
-                </div>
-                
-                <div class="form-group">
-                    <label for="post-description">Описание:</label>
-                    <textarea id="post-description" placeholder="Введите описание"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="post-banner">Баннер поста:</label>
-                    <button id="select-banner">Выбрать фото</button>
-                    <input type="file" id="post-banner" accept="image/*" style="display: none;">
-                    <div id="banner-preview" class="banner-preview"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="post-file">Файл для скачивания:</label>
-                    <button id="select-file">Выбрать файл</button>
-                    <input type="file" id="post-file" style="display: none;">
-                    <div id="file-info"></div>
-                </div>
-                
-                <div class="form-actions">
-                    <button id="preview-post">Показать результат</button>
-                    <button id="publish-post" disabled>Опубликовать</button>
-                </div>
-                
-                <div id="post-preview" class="post-preview"></div>
-            </div>
-        </div>
-    </div>
+    </header>
 
-    <!-- Google API -->
-    <script src="https://apis.google.com/js/api.js"></script>
-    <script src="google-auth.js"></script>
-    <script src="google-drive-api.js"></script>
-    <script src="script.js"></script>
+    <main class="container">
+        <!-- BTX Converter Tab -->
+        <div id="btx-tab" class="tab-content active">
+            <div class="converter-box">
+                <h2>BTX/PNG Converter</h2>
+                <div class="progress-container" id="btx-progress">
+                    <div class="progress-bar" id="btx-progress-bar"></div>
+                </div>
+                <p class="status" id="btx-status"></p>
+                
+                <div class="button-column">
+                    <button class="btn convert-btn" id="btx-to-png-btn">
+                        <span>Convert BTX to PNG</span>
+                        <div class="btn-underline"></div>
+                    </button>
+                    <input type="file" id="btx-to-png-input" class="file-input" accept=".btx" multiple>
+                    
+                    <button class="btn convert-btn" id="png-to-btx-btn">
+                        <span>Convert PNG to BTX</span>
+                        <div class="btn-underline"></div>
+                    </button>
+                    <input type="file" id="png-to-btx-input" class="file-input" accept=".png" multiple>
+                    
+                    <button class="btn convert-btn" id="btx-zip-to-png-btn">
+                        <span>Convert ZIP with BTX</span>
+                        <div class="btn-underline"></div>
+                    </button>
+                    <input type="file" id="btx-zip-input" class="file-input" accept=".zip">
+                    
+                    <button class="btn convert-btn" id="png-zip-to-btx-btn">
+                        <span>Convert ZIP with PNG</span>
+                        <div class="btn-underline"></div>
+                    </button>
+                    <input type="file" id="png-zip-input" class="file-input" accept=".zip">
+                </div>
+                
+                <a id="btx-download" class="btn download-btn">
+                    <span>Download Files</span>
+                    <div class="btn-underline"></div>
+                </a>
+            </div>
+        </div>
+
+        <!-- MOD Converter Tab -->
+        <div id="mod-tab" class="tab-content">
+            <div class="converter-box">
+                <h2>DFF/MOD Converter</h2>
+                <div class="progress-container" id="mod-progress">
+                    <div class="progress-bar" id="mod-progress-bar"></div>
+                </div>
+                <p class="status" id="mod-status"></p>
+                
+                <div class="button-column">
+                    <button class="btn convert-btn" id="dff-to-mod-btn">
+                        <span>Convert DFF to MOD</span>
+                        <div class="btn-underline"></div>
+                    </button>
+                    <input type="file" id="dff-to-mod-input" class="file-input" accept=".dff" multiple>
+                </div>
+                
+                <a id="mod-download" class="btn download-btn">
+                    <span>Download Files</span>
+                    <div class="btn-underline"></div>
+                </a>
+            </div>
+        </div>
+
+        <!-- About Tab -->
+        <div id="about-tab" class="tab-content">
+            <div class="converter-box">
+                <div class="info-box">
+                    <h3>Разработчики</h3>
+                    <a href="https://t.me/kotek_mods" target="_blank" class="dev-link">
+                        <span>Kotek</span>
+                        <div class="link-underline"></div>
+                    </a>
+                    <a href="https://t.me/noface_mods" target="_blank" class="dev-link">
+                        <span>NoFace mods</span>
+                        <div class="link-underline"></div>
+                    </a>
+                </div>
+                
+                <div class="info-box">
+                    <h3>Документация</h3>
+                    <div class="scrollable">
+                        <p>Профессиональный конвертер файлов для игровых форматов.</p>
+                        <p>Поддерживаемые форматы:</p>
+                        <ul>
+                            <li>BTX ↔ PNG (включая пакетную обработку ZIP)</li>
+                            <li>DFF → MOD (массовая конвертация)</li>
+                        </ul>
+                        <p>Все операции выполняются локально в вашем браузере.</p>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <h3>Настройки</h3>
+                    <div class="button-column">
+                        <button class="btn convert-btn" id="change-bg-btn">
+                            <span>Заменить фон сайта</span>
+                            <div class="btn-underline"></div>
+                        </button>
+                        <input type="file" id="bg-input" class="file-input" accept="image/*">
+                        
+                        <button class="btn convert-btn" id="change-theme-btn">
+                            <span>Тёмная тема</span>
+                            <div class="btn-underline"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <nav class="tabs">
+        <div class="tab-highlight"></div>
+        <button class="tab-btn active" data-tab="btx-tab">
+            <span>BTX</span>
+        </button>
+        <button class="tab-btn" data-tab="mod-tab">
+            <span>MOD</span>
+        </button>
+        <button class="tab-btn" data-tab="about-tab">
+            <span>О продукте</span>
+        </button>
+    </nav>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
