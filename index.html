@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AkerKot Converter</title>
+    <title>AkerKot modification</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 </head>
@@ -52,11 +52,6 @@
                     </button>
                     <input type="file" id="png-zip-input" class="file-input" accept=".zip">
                 </div>
-                
-                <a id="btx-download" class="btn download-btn">
-                    <span>Download Files</span>
-                    <div class="btn-underline"></div>
-                </a>
             </div>
         </div>
 
@@ -76,11 +71,6 @@
                     </button>
                     <input type="file" id="dff-to-mod-input" class="file-input" accept=".dff" multiple>
                 </div>
-                
-                <a id="mod-download" class="btn download-btn">
-                    <span>Download Files</span>
-                    <div class="btn-underline"></div>
-                </a>
             </div>
         </div>
 
@@ -102,13 +92,13 @@
                 <div class="info-box">
                     <h3>Документация</h3>
                     <div class="scrollable">
-                        <p>Дополнение к AkerKot</p>
-                        <p>Открытый мод новых функций бота</p>
+                        <p>Модификация к боту AkerKot</p>
+                        <p>Поддерживаемые форматы:</p>
                         <ul>
-                            <li>Конвертор</li>
-                            <li>Новые функции в разработке</li>
+                            <li>BTX ↔ PNG (включая пакетную обработку ZIP)</li>
+                            <li>DFF → MOD (массовая конвертация)</li>
                         </ul>
-                        <p>При использовании модификации вы соглашаетесь с нашими правилами, а также подтверждаете что сайт не несет за вас ответственность.</p>
+                        <p></p>
                     </div>
                 </div>
                 
@@ -129,6 +119,34 @@
                 </div>
             </div>
         </div>
+
+        <!-- RGB Color Picker Tab -->
+        <div id="rgb-tab" class="tab-content">
+            <div class="converter-box">
+                <h2>RGB Color Picker</h2>
+                <div class="color-picker-container">
+                    <div class="color-picker">
+                        <div class="color-wheel" id="color-wheel"></div>
+                        <div class="color-preview" id="color-preview"></div>
+                    </div>
+                    <div class="color-controls">
+                        <div class="opacity-slider">
+                            <label for="opacity-range">Opacity:</label>
+                            <input type="range" id="opacity-range" min="0" max="100" value="100">
+                            <span id="opacity-value">100%</span>
+                        </div>
+                        <div class="color-hex">
+                            <label for="hex-code">HEX:</label>
+                            <input type="text" id="hex-code" readonly>
+                            <button class="btn copy-btn" id="copy-hex">
+                                <span>Copy</span>
+                                <div class="btn-underline"></div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <nav class="tabs">
@@ -138,6 +156,9 @@
         </button>
         <button class="tab-btn" data-tab="mod-tab">
             <span>MOD</span>
+        </button>
+       <button class="tab-btn" data-tab="rgb-tab">
+            <span>RGB</span>
         </button>
         <button class="tab-btn" data-tab="about-tab">
             <span>О продукте</span>
