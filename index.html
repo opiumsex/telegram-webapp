@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AkerKot modification</title>
+    <title>AkerKot Конвертер</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
@@ -13,7 +13,7 @@
     </header>
 
     <main>
-        <div class="tab-content" id="btx-tab">
+        <div class="tab-content active" id="btx-tab">
             <h2>Конвертер BTX/PNG</h2>
             <div class="converter-container">
                 <div class="converter-option">
@@ -35,7 +35,7 @@
             </div>
         </div>
 
-        <div class="tab-content" id="mod-tab" style="display: none;">
+        <div class="tab-content" id="mod-tab">
             <h2>Конвертер DFF в MOD</h2>
             <div class="converter-container">
                 <div class="converter-option">
@@ -45,7 +45,7 @@
             </div>
         </div>
 
-        <div class="tab-content" id="rgb-tab" style="display: none;">
+        <div class="tab-content" id="rgb-tab">
             <h2>Палитра цветов</h2>
             <div class="color-picker-container">
                 <div class="color-picker">
@@ -66,25 +66,25 @@
             </div>
         </div>
 
-        <div class="tab-content" id="about-tab" style="display: none;">
+        <div class="tab-content" id="about-tab">
             <h2>О программе</h2>
             <div class="info-box">
                 <h3>Разработчики</h3>
-                <p><a href="https://t.me/kotek_mods" target="_blank" class="dev-link">Kotek</a></p>
-                <p><a href="https://t.me/noface_mods" target="_blank" class="dev-link">NoFace mods</a></p>
+                <p><a href="https://github.com/akerkot" target="_blank" class="dev-link">AkerKot</a></p>
+                <p><a href="#" target="_blank" class="dev-link">Участники проекта</a></p>
             </div>
             <div class="info-box scrollable">
                 <h3>Документация</h3>
                 <div class="scroll-content">
-                    <p>Дополнение к боту AkerKot</p>
+                    <p>Этот инструмент позволяет конвертировать файлы между различными форматами:</p>
                     <ul>
                         <li>Конвертация изображений BTX ↔ PNG</li>
                         <li>Конвертация моделей DFF → MOD</li>
                     </ul>
                     <p>Также включает инструмент для выбора цвета с выводом HEX кода.</p>
-                    <p>Это отличный выбор для создания сборок</p>
+                    <p>Все преобразования выполняются локально в вашем браузере - файлы не загружаются на сервер.</p>
                     <p>Для пакетной обработки можно выбрать несколько файлов или использовать ZIP архивы.</p>
-                    <p>Самый ахуеный дизайн</p>
+                    <p>Инструмент имеет минималистичный интерфейс и оптимизирован для быстрой работы.</p>
                 </div>
             </div>
             <div class="info-box">
@@ -94,7 +94,7 @@
                     <input type="file" id="bg-file" accept="image/*" style="display: none;">
                 </div>
                 <div class="setting-option">
-                    <button id="change-theme" class="setting-btn">Тёмная тема</button>
+                    <button id="change-theme" class="setting-btn">Синяя тема</button>
                 </div>
             </div>
         </div>
