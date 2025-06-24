@@ -1,23 +1,23 @@
 :root {
-    --bg-color: #000000;
+    --bg-color: #2d2d2d;
     --text-color: #ffffff;
-    --accent-color: #ffffff;
-    --button-bg: #ffffff;
-    --button-text: #000000;
-    --box-bg: rgba(255, 255, 255, 0.1);
-    --scrollbar-thumb: rgba(255, 255, 255, 0.3);
-    --scrollbar-track: rgba(255, 255, 255, 0.1);
+    --accent-color: #4a76a8;
+    --button-bg: #4a76a8;
+    --button-text: #ffffff;
+    --box-bg: rgba(74, 118, 168, 0.2);
+    --scrollbar-thumb: #4a76a8;
+    --scrollbar-track: rgba(74, 118, 168, 0.1);
 }
 
 [data-theme="light"] {
-    --bg-color: #ffffff;
-    --text-color: #000000;
-    --accent-color: #000000;
-    --button-bg: #000000;
+    --bg-color: #e0e0e0;
+    --text-color: #333333;
+    --accent-color: #3a5f8a;
+    --button-bg: #3a5f8a;
     --button-text: #ffffff;
-    --box-bg: rgba(0, 0, 0, 0.1);
-    --scrollbar-thumb: rgba(0, 0, 0, 0.3);
-    --scrollbar-track: rgba(0, 0, 0, 0.1);
+    --box-bg: rgba(58, 95, 138, 0.1);
+    --scrollbar-thumb: #3a5f8a;
+    --scrollbar-track: rgba(58, 95, 138, 0.05);
 }
 
 * {
@@ -61,7 +61,7 @@ header {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, var(--text-color), transparent);
+    background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
     background-size: 200% 100%;
     animation: shine 3s infinite;
     opacity: 0.5;
@@ -87,12 +87,16 @@ main {
 }
 
 .tab-content {
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
     gap: 2rem;
     padding: 1rem;
     animation: fadeIn 0.5s ease;
+}
+
+.tab-content.active {
+    display: flex;
 }
 
 @keyframes fadeIn {
@@ -147,6 +151,7 @@ h2 {
 .converter-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-color: #5a8bc8;
 }
 
 .converter-btn:active {
@@ -274,6 +279,7 @@ h2 {
 
 .copy-btn:hover {
     transform: translateY(-2px);
+    background-color: #5a8bc8;
 }
 
 .copy-btn:active {
@@ -311,7 +317,7 @@ h2 {
 }
 
 .dev-link:hover {
-    color: var(--button-bg);
+    color: #5a8bc8;
     text-decoration: underline;
 }
 
@@ -359,6 +365,7 @@ h2 {
 
 .setting-btn:hover {
     transform: translateY(-2px);
+    background-color: #5a8bc8;
 }
 
 .setting-btn:active {
