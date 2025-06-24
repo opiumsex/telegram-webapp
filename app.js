@@ -5,9 +5,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.documentElement.setAttribute('data-theme', currentTheme);
     
     if (currentTheme === 'light') {
-        themeToggle.textContent = 'Light Theme';
+        themeToggle.textContent = 'Светлая тема';
     } else {
-        themeToggle.textContent = 'Dark Theme';
+        themeToggle.textContent = 'Синяя тема';
     }
     
     themeToggle.addEventListener('click', function() {
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
-        themeToggle.textContent = newTheme === 'light' ? 'Светлая тема' : 'Тёмная тема';
+        themeToggle.textContent = newTheme === 'light' ? 'Светлая тема' : 'Синяя тема';
     });
     
     // Background image change
@@ -57,9 +57,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update tab contents
         const tabId = tab.getAttribute('data-tab');
         tabContents.forEach(content => {
-            content.style.display = 'none';
+            content.classList.remove('active');
         });
-        document.getElementById(tabId).style.display = 'flex';
+        document.getElementById(tabId).classList.add('active');
         
         // Move indicator
         const tabRect = tab.getBoundingClientRect();
@@ -242,12 +242,9 @@ document.addEventListener('DOMContentLoaded', function() {
         for (const file of files) {
             if (file.name.endsWith('.btx')) {
                 try {
-                    // In a real implementation, you would convert BTX to PNG here
-                    // For demo purposes, we'll just create a dummy PNG
                     const pngBlob = await convertBtxToPng(file);
                     const pngUrl = URL.createObjectURL(pngBlob);
                     
-                    // Create download link
                     const a = document.createElement('a');
                     a.href = pngUrl;
                     a.download = file.name.replace('.btx', '.png');
@@ -255,11 +252,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     a.click();
                     document.body.removeChild(a);
                     
-                    // Revoke the URL after download
                     setTimeout(() => URL.revokeObjectURL(pngUrl), 100);
                 } catch (error) {
                     console.error('Error converting BTX to PNG:', error);
-                    alert(`Error converting ${file.name}: ${error.message}`);
+                    alert(`Ошибка конвертации ${file.name}: ${error.message}`);
                 }
             }
         }
@@ -280,12 +276,9 @@ document.addEventListener('DOMContentLoaded', function() {
         for (const file of files) {
             if (file.name.endsWith('.png')) {
                 try {
-                    // In a real implementation, you would convert PNG to BTX here
-                    // For demo purposes, we'll just create a dummy BTX file
                     const btxBlob = await convertPngToBtx(file);
                     const btxUrl = URL.createObjectURL(btxBlob);
                     
-                    // Create download link
                     const a = document.createElement('a');
                     a.href = btxUrl;
                     a.download = file.name.replace('.png', '.btx');
@@ -293,11 +286,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     a.click();
                     document.body.removeChild(a);
                     
-                    // Revoke the URL after download
                     setTimeout(() => URL.revokeObjectURL(btxUrl), 100);
                 } catch (error) {
                     console.error('Error converting PNG to BTX:', error);
-                    alert(`Error converting ${file.name}: ${error.message}`);
+                    alert(`Ошибка конвертации ${file.name}: ${error.message}`);
                 }
             }
         }
@@ -316,12 +308,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!file || !file.name.endsWith('.zip')) return;
         
         try {
-            // In a real implementation, you would process the ZIP file here
-            // Extract BTX files, convert them to PNG, and create a new ZIP
             const pngZipBlob = await convertBtxZipToPngZip(file);
             const pngZipUrl = URL.createObjectURL(pngZipBlob);
             
-            // Create download link
             const a = document.createElement('a');
             a.href = pngZipUrl;
             a.download = file.name.replace('.zip', '_converted.zip');
@@ -329,11 +318,10 @@ document.addEventListener('DOMContentLoaded', function() {
             a.click();
             document.body.removeChild(a);
             
-            // Revoke the URL after download
             setTimeout(() => URL.revokeObjectURL(pngZipUrl), 100);
         } catch (error) {
             console.error('Error converting ZIP (BTX) to ZIP (PNG):', error);
-            alert(`Error converting ZIP file: ${error.message}`);
+            alert(`Ошибка конвертации ZIP файла: ${error.message}`);
         }
     });
     
@@ -350,12 +338,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!file || !file.name.endsWith('.zip')) return;
         
         try {
-            // In a real implementation, you would process the ZIP file here
-            // Extract PNG files, convert them to BTX, and create a new ZIP
             const btxZipBlob = await convertPngZipToBtxZip(file);
             const btxZipUrl = URL.createObjectURL(btxZipBlob);
             
-            // Create download link
             const a = document.createElement('a');
             a.href = btxZipUrl;
             a.download = file.name.replace('.zip', '_converted.zip');
@@ -363,11 +348,10 @@ document.addEventListener('DOMContentLoaded', function() {
             a.click();
             document.body.removeChild(a);
             
-            // Revoke the URL after download
             setTimeout(() => URL.revokeObjectURL(btxZipUrl), 100);
         } catch (error) {
             console.error('Error converting ZIP (PNG) to ZIP (BTX):', error);
-            alert(`Error converting ZIP file: ${error.message}`);
+            alert(`Ошибка конвертации ZIP файла: ${error.message}`);
         }
     });
     
@@ -386,12 +370,9 @@ document.addEventListener('DOMContentLoaded', function() {
         for (const file of files) {
             if (file.name.endsWith('.dff')) {
                 try {
-                    // In a real implementation, you would convert DFF to MOD here
-                    // For demo purposes, we'll just create a dummy MOD file
                     const modBlob = await convertDffToMod(file);
                     const modUrl = URL.createObjectURL(modBlob);
                     
-                    // Create download link
                     const a = document.createElement('a');
                     a.href = modUrl;
                     a.download = file.name.replace('.dff', '.mod');
@@ -399,11 +380,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     a.click();
                     document.body.removeChild(a);
                     
-                    // Revoke the URL after download
                     setTimeout(() => URL.revokeObjectURL(modUrl), 100);
                 } catch (error) {
                     console.error('Error converting DFF to MOD:', error);
-                    alert(`Error converting ${file.name}: ${error.message}`);
+                    alert(`Ошибка конвертации ${file.name}: ${error.message}`);
                 }
             }
         }
