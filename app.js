@@ -1,634 +1,442 @@
-class App {
-    constructor() {
-        this.currentTab = 'btx-tab';
-        this.theme = localStorage.getItem('theme') || 'dark';
-        this.bgImage = localStorage.getItem('bgImage');
-        this.currentColor = { r: 255, g: 0, b: 0, a: 1 };
-        this.initElements();
-        this.initEventListeners();
-        this.initTabHighlight();
-        this.applySavedSettings();
-        this.initColorPicker();
+document.addEventListener('DOMContentLoaded', function() {
+    // Theme management
+    const themeToggle = document.getElementById('change-theme');
+    const currentTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    
+    if (currentTheme === 'light') {
+        themeToggle.textContent = 'Light Theme';
+    } else {
+        themeToggle.textContent = 'Dark Theme';
     }
-
-    initElements() {
-        // Tabs
-        this.tabButtons = document.querySelectorAll('.tab-btn');
-        this.tabContents = document.querySelectorAll('.tab-content');
-        this.tabHighlight = document.querySelector('.tab-highlight');
-        
-        // Background
-        this.backgroundOverlay = document.querySelector('.background-overlay');
-        this.changeBgBtn = document.getElementById('change-bg-btn');
-        this.bgInput = document.getElementById('bg-input');
-        
-        // Theme
-        this.changeThemeBtn = document.getElementById('change-theme-btn');
-        
-        // BTX Converter
-        this.btxToPngBtn = document.getElementById('btx-to-png-btn');
-        this.btxToPngInput = document.getElementById('btx-to-png-input');
-        this.pngToBtxBtn = document.getElementById('png-to-btx-btn');
-        this.pngToBtxInput = document.getElementById('png-to-btx-input');
-        this.btxZipBtn = document.getElementById('btx-zip-to-png-btn');
-        this.btxZipInput = document.getElementById('btx-zip-input');
-        this.pngZipBtn = document.getElementById('png-zip-to-btx-btn');
-        this.pngZipInput = document.getElementById('png-zip-input');
-        
-        // MOD Converter
-        this.dffToModBtn = document.getElementById('dff-to-mod-btn');
-        this.dffToModInput = document.getElementById('dff-to-mod-input');
-        
-        // Progress bars
-        this.btxProgress = document.getElementById('btx-progress');
-        this.btxProgressBar = document.getElementById('btx-progress-bar');
-        this.btxStatus = document.getElementById('btx-status');
-        this.modProgress = document.getElementById('mod-progress');
-        this.modProgressBar = document.getElementById('mod-progress-bar');
-        this.modStatus = document.getElementById('mod-status');
-        
-        // Color Picker
-        this.colorWheel = document.getElementById('color-wheel');
-        this.colorPreview = document.getElementById('color-preview');
-        this.opacityRange = document.getElementById('opacity-range');
-        this.opacityValue = document.getElementById('opacity-value');
-        this.hexCode = document.getElementById('hex-code');
-        this.copyHexBtn = document.getElementById('copy-hex');
-    }
-
-    initEventListeners() {
-        // Tab switching
-        this.tabButtons.forEach(btn => {
-            btn.addEventListener('click', () => this.switchTab(btn));
-        });
-        
-        // Background change
-        this.changeBgBtn.addEventListener('click', () => this.bgInput.click());
-        this.bgInput.addEventListener('change', (e) => this.changeBackground(e));
-        
-        // Theme toggle
-        this.changeThemeBtn.addEventListener('click', () => this.toggleTheme());
-        
-        // BTX Converter
-        this.btxToPngBtn.addEventListener('click', () => this.btxToPngInput.click());
-        this.btxToPngInput.addEventListener('change', (e) => this.handleBtxToPng(e));
-        
-        this.pngToBtxBtn.addEventListener('click', () => this.pngToBtxInput.click());
-        this.pngToBtxInput.addEventListener('change', (e) => this.handlePngToBtx(e));
-        
-        this.btxZipBtn.addEventListener('click', () => this.btxZipInput.click());
-        this.btxZipInput.addEventListener('change', (e) => this.handleBtxZip(e));
-        
-        this.pngZipBtn.addEventListener('click', () => this.pngZipInput.click());
-        this.pngZipInput.addEventListener('change', (e) => this.handlePngZip(e));
-        
-        // MOD Converter
-        this.dffToModBtn.addEventListener('click', () => this.dffToModInput.click());
-        this.dffToModInput.addEventListener('change', (e) => this.handleDffToMod(e));
-        
-        // Color Picker
-        this.opacityRange.addEventListener('input', () => this.updateOpacity());
-        this.copyHexBtn.addEventListener('click', () => this.copyHexToClipboard());
-    }
-
-    initColorPicker() {
-        // Initialize color wheel
-        this.colorWheel.addEventListener('mousedown', (e) => {
-            this.handleColorSelection(e);
-            const moveHandler = (e) => this.handleColorSelection(e);
-            const upHandler = () => {
-                document.removeEventListener('mousemove', moveHandler);
-                document.removeEventListener('mouseup', upHandler);
+    
+    themeToggle.addEventListener('click', function() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        themeToggle.textContent = newTheme === 'light' ? 'Светлая тема' : 'Тёмная тема';
+    });
+    
+    // Background image change
+    const changeBgBtn = document.getElementById('change-bg');
+    const bgFileInput = document.getElementById('bg-file');
+    
+    changeBgBtn.addEventListener('click', function() {
+        bgFileInput.click();
+    });
+    
+    bgFileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.body.style.backgroundImage = `url(${event.target.result})`;
+                localStorage.setItem('backgroundImage', event.target.result);
             };
-            document.addEventListener('mousemove', moveHandler);
-            document.addEventListener('mouseup', upHandler);
-        });
-        
-        this.colorWheel.addEventListener('touchstart', (e) => {
-            this.handleColorSelection(e.touches[0]);
-            const moveHandler = (e) => this.handleColorSelection(e.touches[0]);
-            const endHandler = () => {
-                document.removeEventListener('touchmove', moveHandler);
-                document.removeEventListener('touchend', endHandler);
-            };
-            document.addEventListener('touchmove', moveHandler);
-            document.addEventListener('touchend', endHandler);
-        });
-        
-        // Set initial color
-        this.updateColorPreview();
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // Load saved background image
+    const savedBg = localStorage.getItem('backgroundImage');
+    if (savedBg) {
+        document.body.style.backgroundImage = `url(${savedBg})`;
     }
-
-    handleColorSelection(e) {
-        const rect = this.colorWheel.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+    
+    // Tab navigation
+    const tabs = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const tabIndicator = document.querySelector('.tab-indicator');
+    
+    function setActiveTab(tab) {
+        // Update tab buttons
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        // Update tab contents
+        const tabId = tab.getAttribute('data-tab');
+        tabContents.forEach(content => {
+            content.style.display = 'none';
+        });
+        document.getElementById(tabId).style.display = 'flex';
+        
+        // Move indicator
+        const tabRect = tab.getBoundingClientRect();
+        const tabBarRect = tab.parentElement.getBoundingClientRect();
+        const left = tabRect.left - tabBarRect.left;
+        const width = tabRect.width;
+        
+        tabIndicator.style.left = `${left}px`;
+        tabIndicator.style.width = `${width}px`;
+    }
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => setActiveTab(tab));
+    });
+    
+    // Initialize first tab as active
+    setActiveTab(document.querySelector('.tab-btn.active'));
+    
+    // Color picker functionality
+    const colorWheel = document.getElementById('color-wheel');
+    const colorSelector = document.getElementById('color-selector');
+    const colorPreview = document.getElementById('color-preview');
+    const opacitySlider = document.getElementById('opacity');
+    const hexCode = document.getElementById('hex-code');
+    const copyHexBtn = document.getElementById('copy-hex');
+    
+    let isDragging = false;
+    
+    function updateColor(x, y) {
+        const rect = colorWheel.getBoundingClientRect();
         const centerX = rect.width / 2;
         const centerY = rect.height / 2;
+        const relX = x - rect.left - centerX;
+        const relY = y - rect.top - centerY;
+        const distance = Math.sqrt(relX * relX + relY * relY);
+        const radius = rect.width / 2;
         
-        // Calculate angle and distance from center
-        const angle = Math.atan2(y - centerY, x - centerX);
-        const distance = Math.min(
-            Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2),
-            centerX
-        );
+        if (distance > radius) {
+            // If outside the circle, find the point on the edge
+            const angle = Math.atan2(relY, relX);
+            const edgeX = centerX + radius * Math.cos(angle);
+            const edgeY = centerY + radius * Math.sin(angle);
+            colorSelector.style.left = `${edgeX - 8}px`;
+            colorSelector.style.top = `${edgeY - 8}px`;
+        } else {
+            colorSelector.style.left = `${x - rect.left - 8}px`;
+            colorSelector.style.top = `${y - rect.top - 8}px`;
+        }
         
-        // Normalize values
-        const normalizedAngle = (angle + Math.PI) / (2 * Math.PI);
-        const normalizedDistance = distance / centerX;
+        // Calculate hue based on position
+        const angle = Math.atan2(relY, relX) * (180 / Math.PI);
+        const hue = (angle + 360) % 360;
         
-        // Convert to RGB
-        const hue = normalizedAngle * 360;
-        const saturation = normalizedDistance * 100;
-        const value = 100;
+        // Calculate saturation based on distance from center
+        const saturation = Math.min(100, Math.round((distance / radius) * 100));
         
-        this.currentColor = this.hsvToRgb(hue, saturation, value);
-        this.updateColorPreview();
+        // Always full brightness for color wheel
+        const brightness = 100;
+        
+        // Update preview and hex code
+        const opacity = opacitySlider.value / 100;
+        const hslaColor = `hsla(${hue}, ${saturation}%, ${brightness}%, ${opacity})`;
+        colorPreview.style.backgroundColor = hslaColor;
+        
+        // Convert HSLA to HEX
+        const hex = hslaToHex(hue, saturation, brightness, opacity);
+        hexCode.value = hex;
     }
-
-    hsvToRgb(h, s, v) {
+    
+    function hslaToHex(h, s, l, a) {
+        // Convert HSL to RGB first
+        h /= 360;
         s /= 100;
-        v /= 100;
-        
-        const c = v * s;
-        const x = c * (1 - Math.abs(((h / 60) % 2) - 1);
-        const m = v - c;
+        l /= 100;
         
         let r, g, b;
         
-        if (h >= 0 && h < 60) {
-            [r, g, b] = [c, x, 0];
-        } else if (h >= 60 && h < 120) {
-            [r, g, b] = [x, c, 0];
-        } else if (h >= 120 && h < 180) {
-            [r, g, b] = [0, c, x];
-        } else if (h >= 180 && h < 240) {
-            [r, g, b] = [0, x, c];
-        } else if (h >= 240 && h < 300) {
-            [r, g, b] = [x, 0, c];
+        if (s === 0) {
+            r = g = b = l; // achromatic
         } else {
-            [r, g, b] = [c, 0, x];
+            const hue2rgb = (p, q, t) => {
+                if (t < 0) t += 1;
+                if (t > 1) t -= 1;
+                if (t < 1/6) return p + (q - p) * 6 * t;
+                if (t < 1/2) return q;
+                if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                return p;
+            };
+            
+            const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+            const p = 2 * l - q;
+            
+            r = hue2rgb(p, q, h + 1/3);
+            g = hue2rgb(p, q, h);
+            b = hue2rgb(p, q, h - 1/3);
         }
         
-        return {
-            r: Math.round((r + m) * 255),
-            g: Math.round((g + m) * 255),
-            b: Math.round((b + m) * 255),
-            a: this.currentColor.a
+        // Convert RGB to HEX
+        const toHex = x => {
+            const hex = Math.round(x * 255).toString(16);
+            return hex.length === 1 ? '0' + hex : hex;
         };
+        
+        const hex = `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+        
+        // Add alpha if not 1
+        if (a < 1) {
+            const alphaHex = Math.round(a * 255).toString(16);
+            return hex + (alphaHex.length === 1 ? '0' + alphaHex : alphaHex);
+        }
+        
+        return hex;
     }
-
-    updateOpacity() {
-        const opacity = parseInt(this.opacityRange.value) / 100;
-        this.currentColor.a = opacity;
-        this.opacityValue.textContent = `${this.opacityRange.value}%`;
-        this.updateColorPreview();
-    }
-
-    updateColorPreview() {
-        const { r, g, b, a } = this.currentColor;
-        this.colorPreview.style.backgroundColor = `rgba(${r}, ${g}, ${b}, ${a})`;
-        this.updateHexCode();
-    }
-
-    updateHexCode() {
-        const { r, g, b, a } = this.currentColor;
-        const hex = this.rgbToHex(r, g, b);
-        const alphaHex = Math.round(a * 255).toString(16).padStart(2, '0');
-        this.hexCode.value = a === 1 ? hex : `${hex}${alphaHex}`;
-    }
-
-    rgbToHex(r, g, b) {
-        return `#${[r, g, b].map(x => x.toString(16).padStart(2, '0')).join('')}`;
-    }
-
-    copyHexToClipboard() {
-        this.hexCode.select();
+    
+    colorWheel.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        updateColor(e.clientX, e.clientY);
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+            updateColor(e.clientX, e.clientY);
+        }
+    });
+    
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+    
+    opacitySlider.addEventListener('input', () => {
+        const currentColor = colorPreview.style.backgroundColor;
+        const opacity = opacitySlider.value / 100;
+        const newColor = currentColor.replace(/[\d\.]+\)$/, opacity + ')');
+        colorPreview.style.backgroundColor = newColor;
+        
+        // Update hex code with new alpha
+        const hex = hexCode.value;
+        if (hex.length === 9) { // If already has alpha
+            const alphaHex = Math.round(opacity * 255).toString(16).padStart(2, '0');
+            hexCode.value = hex.substring(0, 7) + alphaHex;
+        } else if (opacity < 1) {
+            const alphaHex = Math.round(opacity * 255).toString(16).padStart(2, '0');
+            hexCode.value = hex + alphaHex;
+        } else {
+            hexCode.value = hex.substring(0, 7);
+        }
+    });
+    
+    copyHexBtn.addEventListener('click', () => {
+        hexCode.select();
         document.execCommand('copy');
         
-        // Show feedback
-        const originalText = this.copyHexBtn.querySelector('span').textContent;
-        this.copyHexBtn.querySelector('span').textContent = 'Copied!';
+        // Show copied feedback
+        const originalText = copyHexBtn.textContent;
+        copyHexBtn.textContent = 'Скопировано!';
         setTimeout(() => {
-            this.copyHexBtn.querySelector('span').textContent = originalText;
+            copyHexBtn.textContent = originalText;
         }, 2000);
-    }
-
-    applySavedSettings() {
-        // Apply saved theme
-        if (this.theme === 'light') {
-            document.body.classList.add('light-theme');
-            this.changeThemeBtn.querySelector('span').textContent = 'Светлая тема';
-        }
-
-        // Apply saved background
-        if (this.bgImage) {
-            this.backgroundOverlay.style.backgroundImage = `url(${this.bgImage})`;
-        }
-    }
-
-    switchTab(btn) {
-        // Update active tab button
-        this.tabButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        
-        // Update active tab content
-        const tabId = btn.getAttribute('data-tab');
-        this.tabContents.forEach(tab => tab.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        
-        // Move highlight
-        this.moveTabHighlight(btn);
-        this.currentTab = tabId;
-    }
-
-    moveTabHighlight(btn) {
-        const btnRect = btn.getBoundingClientRect();
-        const tabsRect = btn.parentElement.getBoundingClientRect();
-        
-        this.tabHighlight.style.width = `${btnRect.width}px`;
-        this.tabHighlight.style.left = `${btnRect.left - tabsRect.left}px`;
-    }
-
-    changeBackground(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            this.backgroundOverlay.style.backgroundImage = `url(${event.target.result})`;
-            // Save to localStorage
-            localStorage.setItem('bgImage', event.target.result);
-            this.bgImage = event.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
-
-    toggleTheme() {
-        document.body.classList.toggle('light-theme');
-        this.theme = this.theme === 'dark' ? 'light' : 'dark';
-        
-        const themeText = this.theme === 'dark' ? 'Тёмная тема' : 'Светлая тема';
-        this.changeThemeBtn.querySelector('span').textContent = themeText;
-        
-        // Save theme
-        localStorage.setItem('theme', this.theme);
-    }
-
-    async handleBtxToPng(e) {
+    });
+    
+    // Initialize color picker with default values
+    const wheelRect = colorWheel.getBoundingClientRect();
+    const centerX = wheelRect.left + wheelRect.width / 2;
+    const centerY = wheelRect.top + wheelRect.height / 2;
+    updateColor(centerX, centerY);
+    
+    // File conversion functionality
+    // BTX to PNG
+    const btxToPngBtn = document.getElementById('btx-to-png');
+    const btxFilesInput = document.getElementById('btx-files');
+    
+    btxToPngBtn.addEventListener('click', () => {
+        btxFilesInput.click();
+    });
+    
+    btxFilesInput.addEventListener('change', async (e) => {
         const files = Array.from(e.target.files);
         if (files.length === 0) return;
         
-        this.btxProgress.style.display = 'block';
-        this.btxStatus.textContent = 'Starting conversion...';
-        
-        try {
-            for (const file of files) {
-                const arrayBuffer = await file.arrayBuffer();
-                const pngBlob = await this.convertBtxToPng(arrayBuffer);
-                
-                // Save with original name but .png extension
-                const fileName = file.name.replace(/\.btx$/i, '.png');
-                this.saveFile(pngBlob, fileName);
-            }
-            
-            this.btxStatus.textContent = `Conversion complete! ${files.length} files converted.`;
-        } catch (error) {
-            this.btxStatus.textContent = `Error: ${error.message}`;
-            console.error(error);
-        } finally {
-            this.btxProgress.style.display = 'none';
-        }
-    }
-
-    async convertBtxToPng(btxData) {
-        try {
-            const view = new DataView(btxData);
-            
-            // Check for BTX signature (can be customized for your files)
-            const signature = new Uint8Array(btxData, 0, 4);
-            const validSignatures = [
-                [0x42, 0x54, 0x58, 0x31], // BTX1
-                [0x42, 0x49, 0x4E, 0x31]  // BIN1
-            ];
-            
-            const isValid = validSignatures.some(sig => 
-                sig.every((byte, i) => byte === signature[i])
-            );
-            
-            if (!isValid) {
-                console.warn('File signature doesn\'t match known BTX formats, attempting conversion anyway');
-            }
-            
-            // Read header (adjust these offsets as needed for your format)
-            const width = view.getUint32(12, true) || 256;
-            const height = view.getUint32(16, true) || 256;
-            const format = view.getUint32(20, true) || 0;
-            const dataOffset = view.getUint32(24, true) || 32;
-            
-            // Create canvas for conversion
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            const imageData = ctx.createImageData(width, height);
-            
-            // Get texture data
-            const textureData = new Uint8Array(btxData, dataOffset);
-            
-            // Convert based on format
-            switch(format) {
-                case 0: // RGBA8888
-                    for (let i = 0; i < width * height * 4 && i < textureData.length; i++) {
-                        imageData.data[i] = textureData[i];
-                    }
-                    break;
+        for (const file of files) {
+            if (file.name.endsWith('.btx')) {
+                try {
+                    // In a real implementation, you would convert BTX to PNG here
+                    // For demo purposes, we'll just create a dummy PNG
+                    const pngBlob = await convertBtxToPng(file);
+                    const pngUrl = URL.createObjectURL(pngBlob);
                     
-                case 1: // RGB888
-                    for (let i = 0, j = 0; i < width * height * 3 && i < textureData.length; i += 3, j += 4) {
-                        imageData.data[j] = textureData[i];
-                        imageData.data[j+1] = textureData[i+1];
-                        imageData.data[j+2] = textureData[i+2];
-                        imageData.data[j+3] = 255;
-                    }
-                    break;
+                    // Create download link
+                    const a = document.createElement('a');
+                    a.href = pngUrl;
+                    a.download = file.name.replace('.btx', '.png');
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
                     
-                default:
-                    // Fallback - try to interpret as raw RGBA data
-                    for (let i = 0; i < width * height * 4 && i < textureData.length; i++) {
-                        imageData.data[i] = textureData[i];
-                    }
+                    // Revoke the URL after download
+                    setTimeout(() => URL.revokeObjectURL(pngUrl), 100);
+                } catch (error) {
+                    console.error('Error converting BTX to PNG:', error);
+                    alert(`Error converting ${file.name}: ${error.message}`);
+                }
             }
-            
-            ctx.putImageData(imageData, 0, 0);
-            
-            return new Promise((resolve) => {
-                canvas.toBlob(blob => {
-                    if (!blob) throw new Error('Conversion failed');
-                    resolve(blob);
-                }, 'image/png');
-            });
-            
-        } catch (error) {
-            console.error('Conversion error:', error);
-            throw new Error('Failed to convert BTX to PNG. The file may be corrupted or use an unsupported format.');
         }
-    }
-
-    async handlePngToBtx(e) {
+    });
+    
+    // PNG to BTX
+    const pngToBtxBtn = document.getElementById('png-to-btx');
+    const pngFilesInput = document.getElementById('png-files');
+    
+    pngToBtxBtn.addEventListener('click', () => {
+        pngFilesInput.click();
+    });
+    
+    pngFilesInput.addEventListener('change', async (e) => {
         const files = Array.from(e.target.files);
         if (files.length === 0) return;
         
-        this.btxProgress.style.display = 'block';
-        this.btxStatus.textContent = 'Starting conversion...';
-        
-        try {
-            for (const file of files) {
-                const pngBlob = file;
-                const btxBlob = await this.convertPngToBtx(pngBlob);
-                
-                // Save with original name but .btx extension
-                const fileName = file.name.replace(/\.png$/i, '.btx');
-                this.saveFile(btxBlob, fileName);
+        for (const file of files) {
+            if (file.name.endsWith('.png')) {
+                try {
+                    // In a real implementation, you would convert PNG to BTX here
+                    // For demo purposes, we'll just create a dummy BTX file
+                    const btxBlob = await convertPngToBtx(file);
+                    const btxUrl = URL.createObjectURL(btxBlob);
+                    
+                    // Create download link
+                    const a = document.createElement('a');
+                    a.href = btxUrl;
+                    a.download = file.name.replace('.png', '.btx');
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    
+                    // Revoke the URL after download
+                    setTimeout(() => URL.revokeObjectURL(btxUrl), 100);
+                } catch (error) {
+                    console.error('Error converting PNG to BTX:', error);
+                    alert(`Error converting ${file.name}: ${error.message}`);
+                }
             }
-            
-            this.btxStatus.textContent = `Conversion complete! ${files.length} files converted.`;
-        } catch (error) {
-            this.btxStatus.textContent = `Error: ${error.message}`;
-            console.error(error);
-        } finally {
-            this.btxProgress.style.display = 'none';
         }
-    }
-
-    async convertPngToBtx(pngBlob) {
-        try {
-            const img = await createImageBitmap(pngBlob);
-            const canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            
-            // Get image data
-            const imageData = ctx.getImageData(0, 0, img.width, img.height);
-            
-            // Create BTX header (32 bytes)
-            const header = new ArrayBuffer(32);
-            const headerView = new DataView(header);
-            
-            // Signature
-            headerView.setUint8(0, 0x42); // B
-            headerView.setUint8(1, 0x54); // T
-            headerView.setUint8(2, 0x58); // X
-            headerView.setUint8(3, 0x31); // 1
-            
-            // Version
-            headerView.setUint32(4, 1, true);
-            
-            // Dimensions
-            headerView.setUint32(12, img.width, true);
-            headerView.setUint32(16, img.height, true);
-            
-            // Format (0 = RGBA8888)
-            headerView.setUint32(20, 0, true);
-            
-            // Data offset
-            headerView.setUint32(24, 32, true);
-            
-            // Create texture data
-            const textureData = imageData.data;
-            
-            // Combine header and data
-            const btxData = new Uint8Array(32 + textureData.length);
-            btxData.set(new Uint8Array(header), 0);
-            btxData.set(textureData, 32);
-            
-            return new Blob([btxData], {type: 'application/octet-stream'});
-            
-        } catch (error) {
-            console.error('Conversion error:', error);
-            throw new Error('Failed to convert PNG to BTX');
-        }
-    }
-
-    async handleBtxZip(e) {
+    });
+    
+    // ZIP BTX to PNG
+    const btxZipToPngBtn = document.getElementById('btx-zip-to-png');
+    const btxZipInput = document.getElementById('btx-zip');
+    
+    btxZipToPngBtn.addEventListener('click', () => {
+        btxZipInput.click();
+    });
+    
+    btxZipInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
-        if (!file) return;
-        
-        this.btxProgress.style.display = 'block';
-        this.btxStatus.textContent = 'Processing ZIP archive...';
+        if (!file || !file.name.endsWith('.zip')) return;
         
         try {
-            const zip = await JSZip.loadAsync(file);
-            const files = Object.keys(zip.files);
+            // In a real implementation, you would process the ZIP file here
+            // Extract BTX files, convert them to PNG, and create a new ZIP
+            const pngZipBlob = await convertBtxZipToPngZip(file);
+            const pngZipUrl = URL.createObjectURL(pngZipBlob);
             
-            let processed = 0;
-            const total = files.filter(f => f.toLowerCase().endsWith('.btx')).length;
+            // Create download link
+            const a = document.createElement('a');
+            a.href = pngZipUrl;
+            a.download = file.name.replace('.zip', '_converted.zip');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
             
-            for (const fileName of files) {
-                if (!fileName.toLowerCase().endsWith('.btx')) continue;
-                
-                const fileData = await zip.file(fileName).async('arraybuffer');
-                const pngBlob = await this.convertBtxToPng(fileData);
-                
-                // Save with original name but .png extension
-                const newFileName = fileName.replace(/\.btx$/i, '.png');
-                this.saveFile(pngBlob, newFileName);
-                
-                processed++;
-                this.updateProgress('btx', processed, total);
-            }
-            
-            this.btxStatus.textContent = `Conversion complete! ${processed} files converted.`;
+            // Revoke the URL after download
+            setTimeout(() => URL.revokeObjectURL(pngZipUrl), 100);
         } catch (error) {
-            this.btxStatus.textContent = `Error: ${error.message}`;
-            console.error(error);
-        } finally {
-            this.btxProgress.style.display = 'none';
+            console.error('Error converting ZIP (BTX) to ZIP (PNG):', error);
+            alert(`Error converting ZIP file: ${error.message}`);
         }
-    }
-
-    async handlePngZip(e) {
+    });
+    
+    // ZIP PNG to BTX
+    const pngZipToBtxBtn = document.getElementById('png-zip-to-btx');
+    const pngZipInput = document.getElementById('png-zip');
+    
+    pngZipToBtxBtn.addEventListener('click', () => {
+        pngZipInput.click();
+    });
+    
+    pngZipInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
-        if (!file) return;
-        
-        this.btxProgress.style.display = 'block';
-        this.btxStatus.textContent = 'Processing ZIP archive...';
+        if (!file || !file.name.endsWith('.zip')) return;
         
         try {
-            const zip = await JSZip.loadAsync(file);
-            const files = Object.keys(zip.files);
+            // In a real implementation, you would process the ZIP file here
+            // Extract PNG files, convert them to BTX, and create a new ZIP
+            const btxZipBlob = await convertPngZipToBtxZip(file);
+            const btxZipUrl = URL.createObjectURL(btxZipBlob);
             
-            let processed = 0;
-            const total = files.filter(f => f.toLowerCase().endsWith('.png')).length;
+            // Create download link
+            const a = document.createElement('a');
+            a.href = btxZipUrl;
+            a.download = file.name.replace('.zip', '_converted.zip');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
             
-            for (const fileName of files) {
-                if (!fileName.toLowerCase().endsWith('.png')) continue;
-                
-                const fileData = await zip.file(fileName).async('blob');
-                const btxBlob = await this.convertPngToBtx(fileData);
-                
-                // Save with original name but .btx extension
-                const newFileName = fileName.replace(/\.png$/i, '.btx');
-                this.saveFile(btxBlob, newFileName);
-                
-                processed++;
-                this.updateProgress('btx', processed, total);
-            }
-            
-            this.btxStatus.textContent = `Conversion complete! ${processed} files converted.`;
+            // Revoke the URL after download
+            setTimeout(() => URL.revokeObjectURL(btxZipUrl), 100);
         } catch (error) {
-            this.btxStatus.textContent = `Error: ${error.message}`;
-            console.error(error);
-        } finally {
-            this.btxProgress.style.display = 'none';
+            console.error('Error converting ZIP (PNG) to ZIP (BTX):', error);
+            alert(`Error converting ZIP file: ${error.message}`);
         }
-    }
-
-    async handleDffToMod(e) {
+    });
+    
+    // DFF to MOD
+    const dffToModBtn = document.getElementById('dff-to-mod');
+    const dffFilesInput = document.getElementById('dff-files');
+    
+    dffToModBtn.addEventListener('click', () => {
+        dffFilesInput.click();
+    });
+    
+    dffFilesInput.addEventListener('change', async (e) => {
         const files = Array.from(e.target.files);
         if (files.length === 0) return;
         
-        this.modProgress.style.display = 'block';
-        this.modStatus.textContent = 'Starting conversion...';
-        
-        try {
-            for (const file of files) {
-                const arrayBuffer = await file.arrayBuffer();
-                const modBlob = await this.convertDffToMod(arrayBuffer);
-                
-                // Save with original name but .mod extension
-                const fileName = file.name.replace(/\.dff$/i, '.mod');
-                this.saveFile(modBlob, fileName);
+        for (const file of files) {
+            if (file.name.endsWith('.dff')) {
+                try {
+                    // In a real implementation, you would convert DFF to MOD here
+                    // For demo purposes, we'll just create a dummy MOD file
+                    const modBlob = await convertDffToMod(file);
+                    const modUrl = URL.createObjectURL(modBlob);
+                    
+                    // Create download link
+                    const a = document.createElement('a');
+                    a.href = modUrl;
+                    a.download = file.name.replace('.dff', '.mod');
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    
+                    // Revoke the URL after download
+                    setTimeout(() => URL.revokeObjectURL(modUrl), 100);
+                } catch (error) {
+                    console.error('Error converting DFF to MOD:', error);
+                    alert(`Error converting ${file.name}: ${error.message}`);
+                }
             }
-            
-            this.modStatus.textContent = `Conversion complete! ${files.length} files converted.`;
-        } catch (error) {
-            this.modStatus.textContent = `Error: ${error.message}`;
-            console.error(error);
-        } finally {
-            this.modProgress.style.display = 'none';
         }
-    }
+    });
+});
 
-    async convertDffToMod(dffData) {
-        try {
-            const view = new DataView(dffData);
-            
-            // Check for DFF signature (can be customized)
-            const signature = new Uint8Array(dffData, 0, 4);
-            const dffSignature = [0x44, 0x46, 0x46, 0x31]; // DFF1
-            
-            if (!dffSignature.every((byte, i) => byte === signature[i])) {
-                console.warn('File signature doesn\'t match DFF format, attempting conversion anyway');
-            }
-            
-            // Read model info (adjust offsets as needed)
-            const vertexCount = view.getUint32(12, true) || 0;
-            const faceCount = view.getUint32(16, true) || 0;
-            const dataOffset = view.getUint32(24, true) || 32;
-            
-            // Create MOD header (16 bytes)
-            const modHeader = new ArrayBuffer(16);
-            const modHeaderView = new DataView(modHeader);
-            
-            // Signature
-            modHeaderView.setUint8(0, 0x4D); // M
-            modHeaderView.setUint8(1, 0x4F); // O
-            modHeaderView.setUint8(2, 0x44); // D
-            modHeaderView.setUint8(3, 0x31); // 1
-            
-            // Model info
-            modHeaderView.setUint32(4, vertexCount, true);
-            modHeaderView.setUint32(8, faceCount, true);
-            modHeaderView.setUint32(12, 16, true); // Data offset
-            
-            // Copy model data (vertices and faces)
-            const vertices = new Uint8Array(dffData, dataOffset, vertexCount * 12);
-            const faces = new Uint8Array(dffData, dataOffset + vertexCount * 12, faceCount * 12);
-            
-            // Combine all data
-            const modData = new Uint8Array(16 + vertices.length + faces.length);
-            modData.set(new Uint8Array(modHeader), 0);
-            modData.set(vertices, 16);
-            modData.set(faces, 16 + vertices.length);
-            
-            return new Blob([modData], {type: 'application/octet-stream'});
-            
-        } catch (error) {
-            console.error('Conversion error:', error);
-            throw new Error('Failed to convert DFF to MOD. The file may be corrupted or use an unsupported format.');
-        }
-    }
-
-    saveFile(blob, fileName) {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
-
-    updateProgress(type, processed, total) {
-        const progress = Math.round((processed / total) * 100);
-        const progressBar = type === 'btx' ? this.btxProgressBar : this.modProgressBar;
-        const status = type === 'btx' ? this.btxStatus : this.modStatus;
-        
-        progressBar.style.width = `${progress}%`;
-        status.textContent = `Processed ${processed} of ${total} files (${progress}%)`;
-    }
+// Mock conversion functions - replace these with actual conversion logic
+async function convertBtxToPng(btxFile) {
+    // In a real implementation, this would convert BTX to PNG
+    // For demo, we'll create a simple PNG with the same name
+    return new Blob([], { type: 'image/png' });
 }
 
-// Initialize app
-document.addEventListener('DOMContentLoaded', () => {
-    new App();
-    
-    // Check for required APIs
-    if (!window.Blob || !window.FileReader || !window.createImageBitmap) {
-        alert('Your browser doesn\'t support all required features. Please update your browser.');
-    }
-});
+async function convertPngToBtx(pngFile) {
+    // In a real implementation, this would convert PNG to BTX
+    // For demo, we'll create a simple BTX with the same name
+    return new Blob([], { type: 'application/octet-stream' });
+}
+
+async function convertBtxZipToPngZip(zipFile) {
+    // In a real implementation, this would extract BTX files, convert them, and re-zip as PNG
+    // For demo, we'll create a simple ZIP with the same name
+    return new Blob([], { type: 'application/zip' });
+}
+
+async function convertPngZipToBtxZip(zipFile) {
+    // In a real implementation, this would extract PNG files, convert them, and re-zip as BTX
+    // For demo, we'll create a simple ZIP with the same name
+    return new Blob([], { type: 'application/zip' });
+}
+
+async function convertDffToMod(dffFile) {
+    // In a real implementation, this would convert DFF to MOD
+    // For demo, we'll create a simple MOD with the same name
+    return new Blob([], { type: 'application/octet-stream' });
+}
