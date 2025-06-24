@@ -3,10 +3,12 @@ class App {
         this.currentTab = 'btx-tab';
         this.theme = localStorage.getItem('theme') || 'dark';
         this.bgImage = localStorage.getItem('bgImage');
+        this.currentColor = { r: 255, g: 0, b: 0, a: 1 };
         this.initElements();
         this.initEventListeners();
         this.initTabHighlight();
         this.applySavedSettings();
+        this.initColorPicker();
     }
 
     initElements() {
@@ -32,12 +34,10 @@ class App {
         this.btxZipInput = document.getElementById('btx-zip-input');
         this.pngZipBtn = document.getElementById('png-zip-to-btx-btn');
         this.pngZipInput = document.getElementById('png-zip-input');
-        this.btxDownload = document.getElementById('btx-download');
         
         // MOD Converter
         this.dffToModBtn = document.getElementById('dff-to-mod-btn');
         this.dffToModInput = document.getElementById('dff-to-mod-input');
-        this.modDownload = document.getElementById('mod-download');
         
         // Progress bars
         this.btxProgress = document.getElementById('btx-progress');
@@ -46,6 +46,14 @@ class App {
         this.modProgress = document.getElementById('mod-progress');
         this.modProgressBar = document.getElementById('mod-progress-bar');
         this.modStatus = document.getElementById('mod-status');
+        
+        // Color Picker
+        this.colorWheel = document.getElementById('color-wheel');
+        this.colorPreview = document.getElementById('color-preview');
+        this.opacityRange = document.getElementById('opacity-range');
+        this.opacityValue = document.getElementById('opacity-value');
+        this.hexCode = document.getElementById('hex-code');
+        this.copyHexBtn = document.getElementById('copy-hex');
     }
 
     initEventListeners() {
@@ -77,6 +85,133 @@ class App {
         // MOD Converter
         this.dffToModBtn.addEventListener('click', () => this.dffToModInput.click());
         this.dffToModInput.addEventListener('change', (e) => this.handleDffToMod(e));
+        
+        // Color Picker
+        this.opacityRange.addEventListener('input', () => this.updateOpacity());
+        this.copyHexBtn.addEventListener('click', () => this.copyHexToClipboard());
+    }
+
+    initColorPicker() {
+        // Initialize color wheel
+        this.colorWheel.addEventListener('mousedown', (e) => {
+            this.handleColorSelection(e);
+            const moveHandler = (e) => this.handleColorSelection(e);
+            const upHandler = () => {
+                document.removeEventListener('mousemove', moveHandler);
+                document.removeEventListener('mouseup', upHandler);
+            };
+            document.addEventListener('mousemove', moveHandler);
+            document.addEventListener('mouseup', upHandler);
+        });
+        
+        this.colorWheel.addEventListener('touchstart', (e) => {
+            this.handleColorSelection(e.touches[0]);
+            const moveHandler = (e) => this.handleColorSelection(e.touches[0]);
+            const endHandler = () => {
+                document.removeEventListener('touchmove', moveHandler);
+                document.removeEventListener('touchend', endHandler);
+            };
+            document.addEventListener('touchmove', moveHandler);
+            document.addEventListener('touchend', endHandler);
+        });
+        
+        // Set initial color
+        this.updateColorPreview();
+    }
+
+    handleColorSelection(e) {
+        const rect = this.colorWheel.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        // Calculate angle and distance from center
+        const angle = Math.atan2(y - centerY, x - centerX);
+        const distance = Math.min(
+            Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2),
+            centerX
+        );
+        
+        // Normalize values
+        const normalizedAngle = (angle + Math.PI) / (2 * Math.PI);
+        const normalizedDistance = distance / centerX;
+        
+        // Convert to RGB
+        const hue = normalizedAngle * 360;
+        const saturation = normalizedDistance * 100;
+        const value = 100;
+        
+        this.currentColor = this.hsvToRgb(hue, saturation, value);
+        this.updateColorPreview();
+    }
+
+    hsvToRgb(h, s, v) {
+        s /= 100;
+        v /= 100;
+        
+        const c = v * s;
+        const x = c * (1 - Math.abs(((h / 60) % 2) - 1);
+        const m = v - c;
+        
+        let r, g, b;
+        
+        if (h >= 0 && h < 60) {
+            [r, g, b] = [c, x, 0];
+        } else if (h >= 60 && h < 120) {
+            [r, g, b] = [x, c, 0];
+        } else if (h >= 120 && h < 180) {
+            [r, g, b] = [0, c, x];
+        } else if (h >= 180 && h < 240) {
+            [r, g, b] = [0, x, c];
+        } else if (h >= 240 && h < 300) {
+            [r, g, b] = [x, 0, c];
+        } else {
+            [r, g, b] = [c, 0, x];
+        }
+        
+        return {
+            r: Math.round((r + m) * 255),
+            g: Math.round((g + m) * 255),
+            b: Math.round((b + m) * 255),
+            a: this.currentColor.a
+        };
+    }
+
+    updateOpacity() {
+        const opacity = parseInt(this.opacityRange.value) / 100;
+        this.currentColor.a = opacity;
+        this.opacityValue.textContent = `${this.opacityRange.value}%`;
+        this.updateColorPreview();
+    }
+
+    updateColorPreview() {
+        const { r, g, b, a } = this.currentColor;
+        this.colorPreview.style.backgroundColor = `rgba(${r}, ${g}, ${b}, ${a})`;
+        this.updateHexCode();
+    }
+
+    updateHexCode() {
+        const { r, g, b, a } = this.currentColor;
+        const hex = this.rgbToHex(r, g, b);
+        const alphaHex = Math.round(a * 255).toString(16).padStart(2, '0');
+        this.hexCode.value = a === 1 ? hex : `${hex}${alphaHex}`;
+    }
+
+    rgbToHex(r, g, b) {
+        return `#${[r, g, b].map(x => x.toString(16).padStart(2, '0')).join('')}`;
+    }
+
+    copyHexToClipboard() {
+        this.hexCode.select();
+        document.execCommand('copy');
+        
+        // Show feedback
+        const originalText = this.copyHexBtn.querySelector('span').textContent;
+        this.copyHexBtn.querySelector('span').textContent = 'Copied!';
+        setTimeout(() => {
+            this.copyHexBtn.querySelector('span').textContent = originalText;
+        }, 2000);
     }
 
     applySavedSettings() {
@@ -140,38 +275,29 @@ class App {
         localStorage.setItem('theme', this.theme);
     }
 
-    // BTX/PNG Conversion Methods
     async handleBtxToPng(e) {
         const files = Array.from(e.target.files);
         if (files.length === 0) return;
         
         this.btxProgress.style.display = 'block';
         this.btxStatus.textContent = 'Starting conversion...';
-        this.btxDownload.style.display = 'none';
         
         try {
-            const zip = new JSZip();
-            let processed = 0;
-            
             for (const file of files) {
                 const arrayBuffer = await file.arrayBuffer();
                 const pngBlob = await this.convertBtxToPng(arrayBuffer);
                 
-                const pngName = file.name.replace('.btx', '.png');
-                zip.file(pngName, pngBlob);
-                
-                processed++;
-                this.updateProgress('btx', processed, files.length);
+                // Save with original name but .png extension
+                const fileName = file.name.replace(/\.btx$/i, '.png');
+                this.saveFile(pngBlob, fileName);
             }
             
-            const content = await zip.generateAsync({type: 'blob'});
-            this.btxDownload.href = URL.createObjectURL(content);
-            this.btxDownload.download = 'converted_png_files.zip';
-            this.btxDownload.style.display = 'inline-block';
-            this.btxStatus.textContent = `Conversion complete! ${processed} files converted.`;
+            this.btxStatus.textContent = `Conversion complete! ${files.length} files converted.`;
         } catch (error) {
             this.btxStatus.textContent = `Error: ${error.message}`;
             console.error(error);
+        } finally {
+            this.btxProgress.style.display = 'none';
         }
     }
 
@@ -255,31 +381,23 @@ class App {
         
         this.btxProgress.style.display = 'block';
         this.btxStatus.textContent = 'Starting conversion...';
-        this.btxDownload.style.display = 'none';
         
         try {
-            const zip = new JSZip();
-            let processed = 0;
-            
             for (const file of files) {
                 const pngBlob = file;
                 const btxBlob = await this.convertPngToBtx(pngBlob);
                 
-                const btxName = file.name.replace('.png', '.btx');
-                zip.file(btxName, btxBlob);
-                
-                processed++;
-                this.updateProgress('btx', processed, files.length);
+                // Save with original name but .btx extension
+                const fileName = file.name.replace(/\.png$/i, '.btx');
+                this.saveFile(btxBlob, fileName);
             }
             
-            const content = await zip.generateAsync({type: 'blob'});
-            this.btxDownload.href = URL.createObjectURL(content);
-            this.btxDownload.download = 'converted_btx_files.zip';
-            this.btxDownload.style.display = 'inline-block';
-            this.btxStatus.textContent = `Conversion complete! ${processed} files converted.`;
+            this.btxStatus.textContent = `Conversion complete! ${files.length} files converted.`;
         } catch (error) {
             this.btxStatus.textContent = `Error: ${error.message}`;
             console.error(error);
+        } finally {
+            this.btxProgress.style.display = 'none';
         }
     }
 
@@ -340,11 +458,9 @@ class App {
         
         this.btxProgress.style.display = 'block';
         this.btxStatus.textContent = 'Processing ZIP archive...';
-        this.btxDownload.style.display = 'none';
         
         try {
             const zip = await JSZip.loadAsync(file);
-            const resultZip = new JSZip();
             const files = Object.keys(zip.files);
             
             let processed = 0;
@@ -356,21 +472,20 @@ class App {
                 const fileData = await zip.file(fileName).async('arraybuffer');
                 const pngBlob = await this.convertBtxToPng(fileData);
                 
-                const pngName = fileName.replace('.btx', '.png');
-                resultZip.file(pngName, pngBlob);
+                // Save with original name but .png extension
+                const newFileName = fileName.replace(/\.btx$/i, '.png');
+                this.saveFile(pngBlob, newFileName);
                 
                 processed++;
                 this.updateProgress('btx', processed, total);
             }
             
-            const content = await resultZip.generateAsync({type: 'blob'});
-            this.btxDownload.href = URL.createObjectURL(content);
-            this.btxDownload.download = 'converted_png_files.zip';
-            this.btxDownload.style.display = 'inline-block';
             this.btxStatus.textContent = `Conversion complete! ${processed} files converted.`;
         } catch (error) {
             this.btxStatus.textContent = `Error: ${error.message}`;
             console.error(error);
+        } finally {
+            this.btxProgress.style.display = 'none';
         }
     }
 
@@ -380,11 +495,9 @@ class App {
         
         this.btxProgress.style.display = 'block';
         this.btxStatus.textContent = 'Processing ZIP archive...';
-        this.btxDownload.style.display = 'none';
         
         try {
             const zip = await JSZip.loadAsync(file);
-            const resultZip = new JSZip();
             const files = Object.keys(zip.files);
             
             let processed = 0;
@@ -396,21 +509,20 @@ class App {
                 const fileData = await zip.file(fileName).async('blob');
                 const btxBlob = await this.convertPngToBtx(fileData);
                 
-                const btxName = fileName.replace('.png', '.btx');
-                resultZip.file(btxName, btxBlob);
+                // Save with original name but .btx extension
+                const newFileName = fileName.replace(/\.png$/i, '.btx');
+                this.saveFile(btxBlob, newFileName);
                 
                 processed++;
                 this.updateProgress('btx', processed, total);
             }
             
-            const content = await resultZip.generateAsync({type: 'blob'});
-            this.btxDownload.href = URL.createObjectURL(content);
-            this.btxDownload.download = 'converted_btx_files.zip';
-            this.btxDownload.style.display = 'inline-block';
             this.btxStatus.textContent = `Conversion complete! ${processed} files converted.`;
         } catch (error) {
             this.btxStatus.textContent = `Error: ${error.message}`;
             console.error(error);
+        } finally {
+            this.btxProgress.style.display = 'none';
         }
     }
 
@@ -420,31 +532,23 @@ class App {
         
         this.modProgress.style.display = 'block';
         this.modStatus.textContent = 'Starting conversion...';
-        this.modDownload.style.display = 'none';
         
         try {
-            const zip = new JSZip();
-            let processed = 0;
-            
             for (const file of files) {
                 const arrayBuffer = await file.arrayBuffer();
                 const modBlob = await this.convertDffToMod(arrayBuffer);
                 
-                const modName = file.name.replace('.dff', '.mod');
-                zip.file(modName, modBlob);
-                
-                processed++;
-                this.updateProgress('mod', processed, files.length);
+                // Save with original name but .mod extension
+                const fileName = file.name.replace(/\.dff$/i, '.mod');
+                this.saveFile(modBlob, fileName);
             }
             
-            const content = await zip.generateAsync({type: 'blob'});
-            this.modDownload.href = URL.createObjectURL(content);
-            this.modDownload.download = 'converted_mod_files.zip';
-            this.modDownload.style.display = 'inline-block';
-            this.modStatus.textContent = `Conversion complete! ${processed} files converted.`;
+            this.modStatus.textContent = `Conversion complete! ${files.length} files converted.`;
         } catch (error) {
             this.modStatus.textContent = `Error: ${error.message}`;
             console.error(error);
+        } finally {
+            this.modProgress.style.display = 'none';
         }
     }
 
@@ -496,6 +600,17 @@ class App {
             console.error('Conversion error:', error);
             throw new Error('Failed to convert DFF to MOD. The file may be corrupted or use an unsupported format.');
         }
+    }
+
+    saveFile(blob, fileName) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     }
 
     updateProgress(type, processed, total) {
