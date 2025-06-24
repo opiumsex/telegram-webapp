@@ -3,111 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AkerKot Конвертер</title>
+    <title>AkerKot Converter</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="background-overlay"></div>
+    
     <header>
-        <h1 class="logo" id="logo">AkerKot</h1>
+        <div class="logo">
+            <span class="logo-text">AkerKot</span>
+            <span class="logo-highlight"></span>
+        </div>
     </header>
 
-    <main>
-        <div class="tab-content active" id="btx-tab">
-            <h2>Конвертер BTX/PNG</h2>
-            <div class="converter-container">
-                <div class="converter-option">
-                    <button id="btx-to-png" class="converter-btn">BTX в PNG</button>
-                    <input type="file" id="btx-files" accept=".btx" multiple style="display: none;">
+    <main class="container">
+        <!-- BTX Converter Tab -->
+        <div id="btx-tab" class="tab-content active">
+            <div class="converter-box">
+                <h2>BTX/PNG Converter</h2>
+                <div class="progress-container" id="btx-progress">
+                    <div class="progress-bar" id="btx-progress-bar"></div>
                 </div>
-                <div class="converter-option">
-                    <button id="png-to-btx" class="converter-btn">PNG в BTX</button>
-                    <input type="file" id="png-files" accept=".png" multiple style="display: none;">
+                <p class="status" id="btx-status"></p>
+                
+                <div class="button-column">
+                    <button class="btn convert-btn" id="btx-to-png-btn">
+                        <span>Convert BTX to PNG</span>
+                        <div class="btn-underline"></div>
+                    </button>
+                    <input type="file" id="btx-to-png-input" class="file-input" accept=".btx" multiple>
+                    
+                    <button class="btn convert-btn" id="png-to-btx-btn">
+                        <span>Convert PNG to BTX</span>
+                        <div class="btn-underline"></div>
+                    </button>
+                    <input type="file" id="png-to-btx-input" class="file-input" accept=".png" multiple>
+                    
+                    <button class="btn convert-btn" id="btx-zip-to-png-btn">
+                        <span>Convert ZIP with BTX</span>
+                        <div class="btn-underline"></div>
+                    </button>
+                    <input type="file" id="btx-zip-input" class="file-input" accept=".zip">
+                    
+                    <button class="btn convert-btn" id="png-zip-to-btx-btn">
+                        <span>Convert ZIP with PNG</span>
+                        <div class="btn-underline"></div>
+                    </button>
+                    <input type="file" id="png-zip-input" class="file-input" accept=".zip">
                 </div>
-                <div class="converter-option">
-                    <button id="btx-zip-to-png" class="converter-btn">ZIP (BTX) в ZIP (PNG)</button>
-                    <input type="file" id="btx-zip" accept=".zip" style="display: none;">
-                </div>
-                <div class="converter-option">
-                    <button id="png-zip-to-btx" class="converter-btn">ZIP (PNG) в ZIP (BTX)</button>
-                    <input type="file" id="png-zip" accept=".zip" style="display: none;">
-                </div>
+                
+                <a id="btx-download" class="btn download-btn">
+                    <span>Download Files</span>
+                    <div class="btn-underline"></div>
+                </a>
             </div>
         </div>
 
-        <div class="tab-content" id="mod-tab">
-            <h2>Конвертер DFF в MOD</h2>
-            <div class="converter-container">
-                <div class="converter-option">
-                    <button id="dff-to-mod" class="converter-btn">Конвертировать DFF в MOD</button>
-                    <input type="file" id="dff-files" accept=".dff" multiple style="display: none;">
+        <!-- MOD Converter Tab -->
+        <div id="mod-tab" class="tab-content">
+            <div class="converter-box">
+                <h2>DFF/MOD Converter</h2>
+                <div class="progress-container" id="mod-progress">
+                    <div class="progress-bar" id="mod-progress-bar"></div>
                 </div>
+                <p class="status" id="mod-status"></p>
+                
+                <div class="button-column">
+                    <button class="btn convert-btn" id="dff-to-mod-btn">
+                        <span>Convert DFF to MOD</span>
+                        <div class="btn-underline"></div>
+                    </button>
+                    <input type="file" id="dff-to-mod-input" class="file-input" accept=".dff" multiple>
+                </div>
+                
+                <a id="mod-download" class="btn download-btn">
+                    <span>Download Files</span>
+                    <div class="btn-underline"></div>
+                </a>
             </div>
         </div>
 
-        <div class="tab-content" id="rgb-tab">
-            <h2>Палитра цветов</h2>
-            <div class="color-picker-container">
-                <div class="color-picker">
-                    <div class="color-wheel" id="color-wheel">
-                        <div class="color-selector" id="color-selector"></div>
+        <!-- About Tab -->
+        <div id="about-tab" class="tab-content">
+            <div class="converter-box">
+                <div class="info-box">
+                    <h3>Разработчики</h3>
+                    <a href="https://t.me/kotek_mods" target="_blank" class="dev-link">
+                        <span>Kotek</span>
+                        <div class="link-underline"></div>
+                    </a>
+                    <a href="https://t.me/noface_mods" target="_blank" class="dev-link">
+                        <span>NoFace mods</span>
+                        <div class="link-underline"></div>
+                    </a>
+                </div>
+                
+                <div class="info-box">
+                    <h3>Документация</h3>
+                    <div class="scrollable">
+                        <p>Профессиональный конвертер файлов для игровых форматов.</p>
+                        <p>Поддерживаемые форматы:</p>
+                        <ul>
+                            <li>BTX ↔ PNG (включая пакетную обработку ZIP)</li>
+                            <li>DFF → MOD (массовая конвертация)</li>
+                        </ul>
+                        <p>Все операции выполняются локально в вашем браузере.</p>
                     </div>
-                    <div class="color-preview" id="color-preview"></div>
                 </div>
-                <div class="opacity-slider">
-                    <label for="opacity">Прозрачность:</label>
-                    <input type="range" id="opacity" min="0" max="100" value="100">
-                </div>
-                <div class="hex-value">
-                    <label for="hex-code">HEX код:</label>
-                    <input type="text" id="hex-code" readonly>
-                    <button id="copy-hex" class="copy-btn">Копировать</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="tab-content" id="about-tab">
-            <h2>О программе</h2>
-            <div class="info-box">
-                <h3>Разработчики</h3>
-                <p><a href="https://github.com/akerkot" target="_blank" class="dev-link">AkerKot</a></p>
-                <p><a href="#" target="_blank" class="dev-link">Участники проекта</a></p>
-            </div>
-            <div class="info-box scrollable">
-                <h3>Документация</h3>
-                <div class="scroll-content">
-                    <p>Этот инструмент позволяет конвертировать файлы между различными форматами:</p>
-                    <ul>
-                        <li>Конвертация изображений BTX ↔ PNG</li>
-                        <li>Конвертация моделей DFF → MOD</li>
-                    </ul>
-                    <p>Также включает инструмент для выбора цвета с выводом HEX кода.</p>
-                    <p>Все преобразования выполняются локально в вашем браузере - файлы не загружаются на сервер.</p>
-                    <p>Для пакетной обработки можно выбрать несколько файлов или использовать ZIP архивы.</p>
-                    <p>Инструмент имеет минималистичный интерфейс и оптимизирован для быстрой работы.</p>
-                </div>
-            </div>
-            <div class="info-box">
-                <h3>Настройки</h3>
-                <div class="setting-option">
-                    <button id="change-bg" class="setting-btn">Изменить фон</button>
-                    <input type="file" id="bg-file" accept="image/*" style="display: none;">
-                </div>
-                <div class="setting-option">
-                    <button id="change-theme" class="setting-btn">Синяя тема</button>
+                
+                <div class="info-box">
+                    <h3>Настройки</h3>
+                    <div class="button-column">
+                        <button class="btn convert-btn" id="change-bg-btn">
+                            <span>Заменить фон сайта</span>
+                            <div class="btn-underline"></div>
+                        </button>
+                        <input type="file" id="bg-input" class="file-input" accept="image/*">
+                        
+                        <button class="btn convert-btn" id="change-theme-btn">
+                            <span>Тёмная тема</span>
+                            <div class="btn-underline"></div>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <nav class="tab-bar">
-        <div class="tab-indicator"></div>
-        <button class="tab-btn active" data-tab="btx-tab">BTX</button>
-        <button class="tab-btn" data-tab="mod-tab">MOD</button>
-        <button class="tab-btn" data-tab="rgb-tab">RGB</button>
-        <button class="tab-btn" data-tab="about-tab">О программе</button>
+    <nav class="tabs">
+        <div class="tab-highlight"></div>
+        <button class="tab-btn active" data-tab="btx-tab">
+            <span>BTX</span>
+        </button>
+        <button class="tab-btn" data-tab="mod-tab">
+            <span>MOD</span>
+        </button>
+        <button class="tab-btn" data-tab="about-tab">
+            <span>О продукте</span>
+        </button>
     </nav>
 
-    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
