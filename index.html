@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Akermansex Team</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Akermansex Team</h1>
+    <div class="menu-button" onclick="toggleMenu()">☰</div>
+  </header>
+
+  <div id="side-menu" class="side-menu">
+    <div class="profile">
+      <div class="avatar" id="avatar"></div>
+      <div class="username" id="username">unknown</div>
+      <button class="login-btn" onclick="openLogin()">Вход</button>
+    </div>
+  </div>
+
+  <main id="content">
+    <!-- Динамический контент -->
+  </main>
+
+  <nav class="tabs">
+    <button class="tab" onclick="switchTab('builds')">Сборки</button>
+    <button class="tab" onclick="switchTab('redesigns')">Редизайны</button>
+    <button class="tab admin-only" onclick="switchTab('admin')">Админ</button>
+    <div class="tab-indicator" id="tab-indicator"></div>
+  </nav>
+
+  <button id="add-post-btn" class="admin-only" onclick="openCreatePost()">+</button>
+
+  <!-- Модальные окна -->
+  <div class="modal" id="login-modal">
+    <div class="modal-content">
+      <h2>Вход администратора</h2>
+      <input type="text" id="login-nick" placeholder="Ваш ник" />
+      <input type="password" id="login-password" placeholder="Пароль" />
+      <button onclick="login()">Войти</button>
+      <button class="close-btn" onclick="closeLogin()">Закрыть</button>
+    </div>
+  </div>
+
+  <div class="modal" id="create-modal">
+    <div class="modal-content">
+      <h2>Создать пост</h2>
+      <input type="text" id="post-title" placeholder="Название поста" />
+      <textarea id="post-desc" placeholder="Описание"></textarea>
+      <input type="file" id="post-image" accept="image/*" />
+      <input type="file" id="post-file" />
+      <button onclick="createPost()">Создать</button>
+      <button class="close-btn" onclick="closeCreatePost()">Закрыть</button>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
