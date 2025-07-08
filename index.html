@@ -1,65 +1,643 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Akermansex Team</title>
-  <link rel="stylesheet" href="css/styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AkermanSex Team</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            opacity: 0.2;
+        }
+
+        header {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px 20px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            backdrop-filter: blur(5px);
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+        main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            padding-bottom: 80px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .post {
+            background-color: rgba(30, 30, 30, 0.8);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 1px solid #444;
+            backdrop-filter: blur(5px);
+        }
+
+        .post-title {
+            font-size: 18px;
+            padding: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .post-images {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+        }
+
+        .post-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .post-image.active {
+            opacity: 1;
+        }
+
+        .image-dots {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #555;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .dot.active {
+            background-color: #fff;
+        }
+
+        .post-description {
+            padding: 15px;
+            font-size: 14px;
+            line-height: 1.5;
+            border-bottom: 1px solid #333;
+            white-space: pre-line;
+        }
+
+        .post-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+        }
+
+        .download-btn {
+            background-color: #fff;
+            color: #000;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background-color: #ddd;
+        }
+
+        .post-date {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        footer {
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0 10px;
+            border-top: 1px solid #333;
+            backdrop-filter: blur(5px);
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 15px;
+            cursor: pointer;
+            position: relative;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            flex: 1;
+            max-width: 120px;
+            min-width: 80px;
+        }
+
+        .tab.active {
+            opacity: 1;
+        }
+
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 5px;
+            object-fit: contain;
+        }
+
+        .tab-name {
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .tab-indicator-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            overflow: hidden;
+        }
+
+        .tab-indicator {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: #fff;
+            border-radius: 3px 3px 0 0;
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        .tab.active .tab-indicator {
+            transform: translateX(0);
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            color: #aaa;
+        }
+
+        .no-posts {
+            text-align: center;
+            padding: 40px 20px;
+            color: #777;
+        }
+
+        @media (min-width: 1024px) {
+            main {
+                padding: 30px 50px;
+            }
+            
+            .post {
+                margin-bottom: 25px;
+            }
+            
+            footer {
+                padding: 15px 0 10px;
+            }
+            
+            .tab {
+                max-width: 150px;
+                padding: 10px 20px;
+            }
+            
+            .tab-icon {
+                width: 28px;
+                height: 28px;
+            }
+            
+            .tab-name {
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>Akermansex Team</h1>
-    <div class="menu-button" onclick="toggleMenu()">☰</div>
-  </header>
+    <video id="video-background" autoplay muted loop>
+        <source src="https://example.com/background.mp4" type="video/mp4">
+    </video>
+    
+    <header>
+        <h1>AkermanSex Team</h1>
+    </header>
+    
+    <main id="main-content">
+        <div class="loading">Загрузка...</div>
+    </main>
+    
+    <footer id="app-footer"></footer>
 
-  <div id="side-menu" class="side-menu">
-    <div class="profile">
-      <div class="avatar" id="avatar"></div>
-      <div class="username" id="username">unknown</div>
-      <button class="login-btn" onclick="openLogin()">Вход</button>
-    </div>
-  </div>
+    <script>
+        // Конфигурация приложения
+        const AppConfig = {
+            version: "1.0.0",
+            github: {
+                username: 'opiumsex',
+                repository: 'telegram-webappPublic',
+                branch: 'main',
+                paths: {
+                    assembly: '/assembly',
+                    news: '/news',
+                    redesign: '/redisines'
+                }
+            },
+            tabs: [
+                {
+                    id: "assembly",
+                    title: "Сборки",
+                    icon: "https://example.com/assembly.png"
+                },
+                {
+                    id: "news",
+                    title: "Новости",
+                    icon: "https://example.com/newss.png"
+                },
+                {
+                    id: "redesign",
+                    title: "Редизайны",
+                    icon: "https://example.com/redisin.png"
+                }
+            ]
+        };
 
-  <main id="content">
-    <!-- Динамический контент -->
-  </main>
+        class AkermanApp {
+            constructor() {
+                this.currentTab = 'assembly';
+                this.init();
+            }
+            
+            init() {
+                this.renderTabs();
+                this.loadTabContent(this.currentTab);
+                this.setupEventListeners();
+            }
+            
+            renderTabs() {
+                const footer = document.getElementById('app-footer');
+                footer.innerHTML = '';
+                
+                AppConfig.tabs.forEach(tab => {
+                    const tabElement = document.createElement('div');
+                    tabElement.className = `tab ${tab.id === this.currentTab ? 'active' : ''}`;
+                    tabElement.dataset.tab = tab.id;
+                    
+                    tabElement.innerHTML = `
+                        <img src="${tab.icon}" alt="${tab.title}" class="tab-icon">
+                        <span class="tab-name">${tab.title}</span>
+                        <div class="tab-indicator-container">
+                            <div class="tab-indicator" style="${tab.id === this.currentTab ? 'transform: translateX(0)' : 'transform: translateX(-100%)'}"></div>
+                        </div>
+                    `;
+                    
+                    footer.appendChild(tabElement);
+                });
+            }
+            
+            async loadTabContent(tabName) {
+                const main = document.getElementById('main-content');
+                main.innerHTML = `<div class="loading">Загрузка ${AppConfig.tabs.find(t => t.id === tabName).title}...</div>`;
+                
+                try {
+                    const posts = await this.fetchPosts(tabName);
+                    this.renderPosts(tabName, posts);
+                } catch (error) {
+                    console.error(`Error loading ${tabName}:`, error);
+                    main.innerHTML = `
+                        <div class="no-posts">
+                            Ошибка загрузки данных. Пожалуйста, попробуйте позже.
+                        </div>
+                    `;
+                }
+            }
+            
+            async fetchPosts(tabName) {
+                const path = AppConfig.github.paths[tabName];
+                const apiUrl = `https://api.github.com/repos/${AppConfig.github.username}/${AppConfig.github.repository}/contents${path}?ref=${AppConfig.github.branch}`;
+                
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`GitHub API responded with status ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                const posts = await Promise.all(
+                    data.filter(item => item.type === 'dir')
+                        .map(async dir => {
+                            try {
+                                const postUrl = `https://api.github.com/repos/${AppConfig.github.username}/${AppConfig.github.repository}/contents${path}/${dir.name}?ref=${AppConfig.github.branch}`;
+                                const postResponse = await fetch(postUrl);
+                                const postData = await postResponse.json();
+                                
+                                return this.processPostData(tabName, dir.name, postData);
+                            } catch (e) {
+                                console.error(`Error processing post ${dir.name}:`, e);
+                                return null;
+                            }
+                        })
+                );
+                
+                return posts.filter(post => post !== null);
+            }
+            
+            processPostData(tabName, postName, postData) {
+                const post = {
+                    name: postName.replace(/_/g, ' '),
+                    images: [],
+                    description: '',
+                    date: 'Неизвестно',
+                    downloadUrl: null
+                };
+                
+                postData.forEach(file => {
+                    if (file.name.startsWith('logo') && file.name.match(/\.(png|jpg|jpeg|gif)$/i)) {
+                        post.images.push({
+                            url: file.download_url,
+                            name: file.name
+                        });
+                    } else if (file.name === 'faq.txt') {
+                        post.descriptionUrl = file.download_url;
+                    } else if (file.name.match(/\.(zip|rar|7z)$/i) && tabName !== 'news') {
+                        post.downloadUrl = file.download_url;
+                    }
+                });
+                
+                post.images.sort((a, b) => {
+                    const numA = parseInt(a.name.match(/\d+/)?.[0] || 0);
+                    const numB = parseInt(b.name.match(/\d+/)?.[0] || 0);
+                    return numA - numB;
+                });
+                
+                const dateMatch = postName.match(/(\d{2})_(\d{2})_(\d{4})$/);
+                if (dateMatch) {
+                    const [_, month, day, year] = dateMatch;
+                    post.date = `${day}.${month}.${year}`;
+                }
+                
+                return post;
+            }
+            
+            async renderPosts(tabName, posts) {
+                const container = document.getElementById('main-content');
+                
+                if (posts.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-posts">
+                            Нет постов для отображения.
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                for (const post of posts) {
+                    if (post.descriptionUrl) {
+                        try {
+                            const descResponse = await fetch(post.descriptionUrl);
+                            post.description = await descResponse.text();
+                        } catch (e) {
+                            console.error(`Error fetching description for ${post.name}:`, e);
+                            post.description = 'Описание недоступно';
+                        }
+                    } else {
+                        post.description = 'Описание недоступно';
+                    }
+                    
+                    const postElement = document.createElement('div');
+                    postElement.className = 'post';
+                    
+                    const titleElement = document.createElement('div');
+                    titleElement.className = 'post-title';
+                    titleElement.textContent = post.name;
+                    postElement.appendChild(titleElement);
+                    
+                    if (post.images.length > 0) {
+                        const imagesContainer = document.createElement('div');
+                        imagesContainer.className = 'post-images';
+                        
+                        post.images.forEach((image, index) => {
+                            const imgElement = document.createElement('img');
+                            imgElement.className = 'post-image';
+                            imgElement.src = image.url;
+                            imgElement.alt = `Изображение ${index + 1}`;
+                            if (index === 0) imgElement.classList.add('active');
+                            imagesContainer.appendChild(imgElement);
+                        });
+                        
+                        postElement.appendChild(imagesContainer);
+                        
+                        if (post.images.length > 1) {
+                            const dotsContainer = document.createElement('div');
+                            dotsContainer.className = 'image-dots';
+                            
+                            post.images.forEach((_, index) => {
+                                const dot = document.createElement('div');
+                                dot.className = 'dot';
+                                if (index === 0) dot.classList.add('active');
+                                dot.dataset.index = index;
+                                dotsContainer.appendChild(dot);
+                            });
+                            
+                            postElement.appendChild(dotsContainer);
+                            this.setupImageCarousel(imagesContainer, dotsContainer);
+                        }
+                    }
+                    
+                    const descElement = document.createElement('div');
+                    descElement.className = 'post-description';
+                    descElement.textContent = post.description;
+                    postElement.appendChild(descElement);
+                    
+                    const footerElement = document.createElement('div');
+                    footerElement.className = 'post-footer';
+                    
+                    if (tabName !== 'news' && post.downloadUrl) {
+                        const downloadBtn = document.createElement('button');
+                        downloadBtn.className = 'download-btn';
+                        downloadBtn.textContent = 'Скачать';
+                        downloadBtn.dataset.downloadUrl = post.downloadUrl;
+                        footerElement.appendChild(downloadBtn);
+                    } else {
+                        const spacer = document.createElement('div');
+                        footerElement.appendChild(spacer);
+                    }
+                    
+                    const dateElement = document.createElement('div');
+                    dateElement.className = 'post-date';
+                    dateElement.textContent = post.date;
+                    footerElement.appendChild(dateElement);
+                    
+                    postElement.appendChild(footerElement);
+                    container.appendChild(postElement);
+                }
+            }
+            
+            setupImageCarousel(imagesContainer, dotsContainer) {
+                const images = imagesContainer.querySelectorAll('.post-image');
+                const dots = dotsContainer.querySelectorAll('.dot');
+                let currentIndex = 0;
+                let interval;
+                
+                function showImage(index) {
+                    images.forEach(img => img.classList.remove('active'));
+                    dots.forEach(dot => dot.classList.remove('active'));
+                    
+                    images[index].classList.add('active');
+                    dots[index].classList.add('active');
+                    currentIndex = index;
+                }
+                
+                function startCarousel() {
+                    interval = setInterval(() => {
+                        const nextIndex = (currentIndex + 1) % images.length;
+                        showImage(nextIndex);
+                    }, 5000);
+                }
+                
+                function stopCarousel() {
+                    clearInterval(interval);
+                }
+                
+                dots.forEach(dot => {
+                    dot.addEventListener('click', () => {
+                        const index = parseInt(dot.dataset.index);
+                        showImage(index);
+                        stopCarousel();
+                        startCarousel();
+                    });
+                });
+                
+                imagesContainer.addEventListener('mouseenter', stopCarousel);
+                imagesContainer.addEventListener('mouseleave', startCarousel);
+                
+                startCarousel();
+            }
+            
+            setupEventListeners() {
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.tab')) {
+                        const tabElement = e.target.closest('.tab');
+                        const tabName = tabElement.dataset.tab;
+                        
+                        if (tabName !== this.currentTab) {
+                            this.switchTab(tabName);
+                        }
+                    }
+                    
+                    if (e.target.classList.contains('download-btn')) {
+                        e.preventDefault();
+                        const url = e.target.dataset.downloadUrl;
+                        if (url) {
+                            window.open(url, '_blank');
+                        }
+                    }
+                });
+            }
+            
+            switchTab(tabName) {
+                // Скрываем все индикаторы
+                document.querySelectorAll('.tab-indicator').forEach(indicator => {
+                    indicator.style.transform = 'translateX(-100%)';
+                });
+                
+                // Показываем активный индикатор
+                const activeTab = document.querySelector(`.tab[data-tab="${tabName}"]`);
+                if (activeTab) {
+                    const indicator = activeTab.querySelector('.tab-indicator');
+                    indicator.style.transform = 'translateX(0)';
+                }
+                
+                // Обновляем классы активности
+                document.querySelectorAll('.tab').forEach(tab => {
+                    if (tab.dataset.tab === tabName) {
+                        tab.classList.add('active');
+                    } else {
+                        tab.classList.remove('active');
+                    }
+                });
+                
+                // Загружаем контент
+                this.currentTab = tabName;
+                this.loadTabContent(tabName);
+            }
+        }
 
-  <nav class="tabs">
-    <button class="tab" onclick="switchTab('builds')">Сборки</button>
-    <button class="tab" onclick="switchTab('redesigns')">Редизайны</button>
-    <button class="tab admin-only" onclick="switchTab('admin')">Админ</button>
-    <div class="tab-indicator" id="tab-indicator"></div>
-  </nav>
-
-  <button id="add-post-btn" class="admin-only" onclick="openCreatePost()">+</button>
-
-  <!-- Модальные окна -->
-  <div class="modal" id="login-modal">
-    <div class="modal-content">
-      <h2>Вход администратора</h2>
-      <input type="text" id="login-nick" placeholder="Ваш ник" />
-      <input type="password" id="login-password" placeholder="Пароль" />
-      <button onclick="login()">Войти</button>
-      <button class="close-btn" onclick="closeLogin()">Закрыть</button>
-    </div>
-  </div>
-
-  <div class="modal" id="create-modal">
-    <div class="modal-content">
-      <h2>Создать пост</h2>
-      <input type="text" id="post-title" placeholder="Название поста" />
-      <textarea id="post-desc" placeholder="Описание"></textarea>
-      <input type="file" id="post-image" accept="image/*" />
-      <input type="file" id="post-file" />
-      <button onclick="createPost()">Создать</button>
-      <button class="close-btn" onclick="closeCreatePost()">Закрыть</button>
-    </div>
-  </div>
-
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
-  <script src="js/firebase-config.js"></script>
-  <script src="js/main.js"></script>
+        // Инициализация приложения
+        document.addEventListener('DOMContentLoaded', () => {
+            new AkermanApp();
+            
+            // Защита от копирования
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.keyCode === 85)) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
